@@ -9,13 +9,72 @@ namespace LPR381.Solving
 {
     internal class Solver
     {
-        public SolverResult SolvePrimalSimplex(LpModel model) { /* TODO */ return null; }
+        #region SolvePrimalSimplex
+        public SolverResult SolvePrimalSimplex(LpModel model) 
+        {
+            Tableau t = BuildCanonicalForm(model);
+            var history = new List<Tableau> { CloneTableau(t) }; // snapshot t-i before any pivots
+
+            // Check for negative RHS (from >= or = constraints) — needs Dual Simplex cleanup first
+            int rhsCol = t.Rows[0].Count - 1;
+            bool hasNegativeRHS = t.Rows.Skip(1).Any(row => row[rhsCol] < 0);
+
+            if (hasNegativeRHS)
+            {
+                //DualSimplex(t, history); // TODO — not built yet, will fix infeasibility before primal loop starts
+            }
+
+            // Normal primal simplex loop
+            bool isUnbounded = false;
+            while (true)
+            {
+                int col = FindPivotColumn(t);
+                if (col == -1) break; // no improving column left -> optimal
+
+                int row = FindPivotRow(t, col);
+                if (row == -1)
+                {
+                    isUnbounded = true;
+                    break;
+                }
+
+                Pivot(t, row, col);
+                t.TableNumber = "t-" + (history.Count + 1); // increments: t-2, t-3, t-4...
+                history.Add(CloneTableau(t));
+            }
+
+            // Build the result
+            var result = new SolverResult();
+            result.FinalTableau = t;
+            result.IterationHistory = history;
+            result.IsUnbounded = isUnbounded;
+            result.IsOptimal = !isUnbounded;
+
+            if (!isUnbounded)
+            {
+                // Objective value sits in the bottom-right corner of the objective row
+                result.ObjectiveValue = t.Rows[0][rhsCol];
+
+                // Extract variable values: for each ORIGINAL decision variable column,
+                // if it's currently basic, its value is that row's RHS; otherwise it's 0 (non-basic)
+                result.VariableValues = new double[model.DecisionVariableCount];
+                for (int j = 0; j < model.DecisionVariableCount; j++)
+                {
+                    int basicRowIndex = t.BasicVariables.IndexOf(t.ColumnNames[j]);
+                    result.VariableValues[j] = basicRowIndex == -1 ? 0 : t.Rows[basicRowIndex][rhsCol];
+                }
+            }
+
+            return result;
+        }
+        #endregion
+
         public SolverResult SolveRevisedSimplex(LpModel model) { /* TODO */ return null; }
         public SolverResult SolveBranchAndBound(LpModel model) { /* TODO — builds/walks a BranchNode tree, calls SolvePrimalSimplex per node */ return null; }
         public SolverResult SolveCuttingPlane(LpModel model) { /* TODO — calls SolvePrimalSimplex, then adds cut rows */ return null; }
         public SolverResult SolveKnapsackBranchAndBound(LpModel model) { /* TODO — separate bounding logic, not simplex-based */ return null; }
 
-
+        #region Prepocessing SignRestrictions
         private LpModel PreprocessingSignRestrictions(LpModel model)
         {
             var newModel = new LpModel();
@@ -82,7 +141,11 @@ namespace LPR381.Solving
 
             return newModel;
         }
+        #endregion
+
         private List<int> GetIntegerVariableIndices(LpModel model) { return null; }
+
+        #region BuildCanonicalForm
         public Tableau BuildCanonicalForm(LpModel rawModel)
         {
             LpModel model = PreprocessingSignRestrictions(rawModel);
@@ -209,13 +272,106 @@ namespace LPR381.Solving
 
             return tableau;
         }
-        private void Pivot(Tableau table, int pivotRow, int pivotCol) { /* Logic to manipulate numbers once pivotRow and pivotCol has been selected */ }
-        private int FindPivotColumn(Tableau table) { /* TODO */ return -1; }
-        private int FindPivotRow(Tableau table, int pivotCol) { /* TODO */ return -1; }
+        #endregion
+
+
+        #region Pivot
+        private void Pivot(Tableau table, int pivotRow, int pivotCol) 
+        {
+            double pivotValue = table.Rows[pivotRow][pivotCol];
+
+            for (int i = 0; i < table.Rows[pivotRow].Count; i++)
+            {
+                table.Rows[pivotRow][i] = table.Rows[pivotRow][i] / pivotValue;
+            }
+
+            for (int i = 0; i < table.Rows.Count; i++) //Rows
+            {
+                if (i == pivotRow)
+                {
+                    continue;
+                }
+
+                double factor = table.Rows[i][pivotCol];
+
+                for (int j = 0; j < table.Rows[0].Count; j++) //Columns
+                {
+                    table.Rows[i][j] = table.Rows[i][j] - factor * table.Rows[pivotRow][j];
+                }
+            }
+            table.BasicVariables[pivotRow] = table.ColumnNames[pivotCol];
+        }
+        #endregion
+
+        #region FindPivotColumn
+        private int FindPivotColumn(Tableau table) 
+        {
+            int colNumber = -1;
+            var objRow = table.Rows[0];
+            int lastCol = objRow.Count - 1; // exclude RHS column
+
+            if (table.IsMaximization)
+            {
+                for (int i = 0; i < lastCol; i++)
+                {
+                    if (objRow[i] >= 0)
+                        continue;
+
+                    if (colNumber == -1 || objRow[i] < objRow[colNumber])
+                    {
+                        colNumber = i;
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < lastCol; i++)
+                {
+                    if (objRow[i] <= 0)
+                        continue;
+
+                    if (colNumber == -1 || objRow[i] > objRow[colNumber])
+                    {
+                        colNumber = i;
+                    }
+                }
+            }
+
+            return colNumber;
+        }
+        #endregion
+
+        #region FindPivotRow
+        private int FindPivotRow(Tableau table, int pivotCol) 
+        {
+            int rowNr = -1;
+            int rhsCol = table.Rows[0].Count - 1;
+
+            for (int i = 1; i < table.Rows.Count; i++)
+            {
+                if (table.Rows[i][pivotCol] <= 0)
+                {
+                    continue; // excludes negative AND zero pivot-column values — this is what removes the ambiguity you're describing
+                }
+
+                double ratio = table.Rows[i][rhsCol] / table.Rows[i][pivotCol];
+
+                if (rowNr == -1 || ratio < (table.Rows[rowNr][rhsCol] / table.Rows[rowNr][pivotCol]))
+                {
+                    rowNr = i;
+                }
+            }
+
+            return rowNr;
+        }
+        #endregion
+
 
         private void DualSimplex(Tableau table, List<Tableau> history) { }
         private int FindDualPivotRow(Tableau table) { return -1; }
         private int FindDualPivotCol(Tableau table, int pivotRow) { return -1; }
+
+        #region CloneTableau
         private Tableau CloneTableau(Tableau table)
         {
             var copy = new Tableau();
@@ -235,5 +391,6 @@ namespace LPR381.Solving
             copy.IsMaximization = table.IsMaximization;
             return copy;
         }
+        #endregion
     }
 }

@@ -12,11 +12,15 @@ namespace LPR381.Input_File_Handler
 {
     internal class HandleInput
     {
+        #region ReadModelFile
         //This method is used after the filePath is read to get the text from within the file it puts each line into 1 line of an array
         public static string[] ReadModelFile(string filePath)
         {
             return File.ReadAllLines(filePath);
         }
+        #endregion
+
+        #region ParseModel
         public static LpModel ParseModel(string[] lines)
         {
             var model = new LpModel();
@@ -39,6 +43,9 @@ namespace LPR381.Input_File_Handler
 
             return model;
         }
+        #endregion
+
+        #region ParseObjectiveLine
         private static (bool isMax, double[] coefficients) ParseObjectiveLine(string line)
         {
             string[] splitLine = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -52,6 +59,9 @@ namespace LPR381.Input_File_Handler
 
             return (isMax, coefficients);
         }
+        #endregion
+
+        #region ParseConstraintLine
         private static Constraints ParseConstraintLine(string line, int numVars)
         {
             string[] splitLine = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
@@ -88,9 +98,13 @@ namespace LPR381.Input_File_Handler
 
             return constraint;
         }
+        #endregion
+
+        #region ParseSignRestrictions
         private static string[] ParseSignRestrictions(string line)
         {
             return line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
         }
+        #endregion
     }
 }
