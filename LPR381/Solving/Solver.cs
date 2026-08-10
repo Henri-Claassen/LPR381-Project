@@ -88,6 +88,7 @@ namespace LPR381.Solving
             LpModel model = PreprocessingSignRestrictions(rawModel);
             var tableau = new Tableau();
             tableau.TableNumber = "t-i"; //The initial number of the table
+            tableau.IsMaximization = model.IsMaximization;
             tableau.RowNames.Add("z"); //Add z to obj fun row
             tableau.BasicVariables.Add("Z"); //Z is added to basic variables so the indexes line up for tablaeu.Rows and tableau.BasicVariables
             int numVars = model.DecisionVariableCount;
@@ -229,7 +230,9 @@ namespace LPR381.Solving
             // Same idea for the two label lists
             copy.ColumnNames = new List<string>(table.ColumnNames);
             copy.BasicVariables = new List<string>(table.BasicVariables);
-
+            copy.RowNames = new List<string>(table.RowNames);
+            copy.TableNumber = table.TableNumber;
+            copy.IsMaximization = table.IsMaximization;
             return copy;
         }
     }

@@ -13,5 +13,6 @@ namespace LPR381.Solving
         public List<string> RowNames { get; set; } = new List<string>();
         public List<string> BasicVariables { get; set; } = new List<string>();
         public string TableNumber { get; set; }
+        public bool IsMaximization { get; set; }
     }
 }
