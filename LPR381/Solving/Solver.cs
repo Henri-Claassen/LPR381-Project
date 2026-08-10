@@ -12,12 +12,12 @@ namespace LPR381.Solving
         #region SolvePrimalSimplex
         public SolverResult SolvePrimalSimplex(LpModel model) 
         {
-            Tableau t = BuildCanonicalForm(model);
-            var history = new List<Tableau> { CloneTableau(t) }; // snapshot t-i before any pivots
+            Tableau table = BuildCanonicalForm(model);
+            var history = new List<Tableau> { CloneTableau(table) }; // snapshot t-i before any pivots
 
             // Check for negative RHS (from >= or = constraints) — needs Dual Simplex cleanup first
-            int rhsCol = t.Rows[0].Count - 1;
-            bool hasNegativeRHS = t.Rows.Skip(1).Any(row => row[rhsCol] < 0);
+            int rhsCol = table.Rows[0].Count - 1;
+            bool hasNegativeRHS = table.Rows.Skip(1).Any(row => row[rhsCol] < 0);
 
             if (hasNegativeRHS)
             {
@@ -28,24 +28,24 @@ namespace LPR381.Solving
             bool isUnbounded = false;
             while (true)
             {
-                int col = FindPivotColumn(t);
+                int col = FindPivotColumn(table);
                 if (col == -1) break; // no improving column left -> optimal
 
-                int row = FindPivotRow(t, col);
+                int row = FindPivotRow(table, col);
                 if (row == -1)
                 {
                     isUnbounded = true;
                     break;
                 }
 
-                Pivot(t, row, col);
-                t.TableNumber = "t-" + (history.Count + 1); // increments: t-2, t-3, t-4...
-                history.Add(CloneTableau(t));
+                Pivot(table, row, col);
+                table.TableNumber = "t-" + (history.Count + 1); // increments: t-2, t-3, t-4...
+                history.Add(CloneTableau(table));
             }
 
             // Build the result
             var result = new SolverResult();
-            result.FinalTableau = t;
+            result.FinalTableau = table;
             result.IterationHistory = history;
             result.IsUnbounded = isUnbounded;
             result.IsOptimal = !isUnbounded;
@@ -53,15 +53,15 @@ namespace LPR381.Solving
             if (!isUnbounded)
             {
                 // Objective value sits in the bottom-right corner of the objective row
-                result.ObjectiveValue = t.Rows[0][rhsCol];
+                result.ObjectiveValue = table.Rows[0][rhsCol];
 
                 // Extract variable values: for each ORIGINAL decision variable column,
                 // if it's currently basic, its value is that row's RHS; otherwise it's 0 (non-basic)
                 result.VariableValues = new double[model.DecisionVariableCount];
                 for (int j = 0; j < model.DecisionVariableCount; j++)
                 {
-                    int basicRowIndex = t.BasicVariables.IndexOf(t.ColumnNames[j]);
-                    result.VariableValues[j] = basicRowIndex == -1 ? 0 : t.Rows[basicRowIndex][rhsCol];
+                    int basicRowIndex = table.BasicVariables.IndexOf(table.ColumnNames[j]);
+                    result.VariableValues[j] = basicRowIndex == -1 ? 0 : table.Rows[basicRowIndex][rhsCol];
                 }
             }
 
@@ -273,7 +273,6 @@ namespace LPR381.Solving
             return tableau;
         }
         #endregion
-
 
         #region Pivot
         private void Pivot(Tableau table, int pivotRow, int pivotCol) 
