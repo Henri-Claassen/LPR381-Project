@@ -10,7 +10,7 @@ namespace LPR381.Solving
     internal class Solver
     {
         #region SolvePrimalSimplex
-        public SolverResult SolvePrimalSimplex(LpModel model) 
+        public SolverResult SolvePrimalSimplex(LpModel model)
         {
             Tableau table = BuildCanonicalForm(model);
             var history = new List<Tableau> { CloneTableau(table) }; // snapshot t-i before any pivots
@@ -18,38 +18,30 @@ namespace LPR381.Solving
             // Check for negative RHS (from >= or = constraints) — needs Dual Simplex cleanup first
             int rhsCol = table.Rows[0].Count - 1;
             bool hasNegativeRHS = table.Rows.Skip(1).Any(row => row[rhsCol] < 0);
+            var result = new SolverResult();
 
             if (hasNegativeRHS)
             {
-                //DualSimplex(t, history); // TODO — not built yet, will fix infeasibility before primal loop starts
+                bool infeasible = DualSimplex(table, history);
+                if (infeasible)
+                {
+                    result.IsInfeasible = true;
+                    result.IsOptimal = false;
+                    result.FinalTableau = table;
+                    result.IterationHistory = history;
+                    return result; // stop here — no point running the primal loop on an infeasible tableau
+                }
             }
 
             // Normal primal simplex loop
-            bool isUnbounded = false;
-            while (true)
-            {
-                int col = FindPivotColumn(table);
-                if (col == -1) break; // no improving column left -> optimal
 
-                int row = FindPivotRow(table, col);
-                if (row == -1)
-                {
-                    isUnbounded = true;
-                    break;
-                }
-
-                Pivot(table, row, col);
-                table.TableNumber = "t-" + (history.Count + 1); // increments: t-2, t-3, t-4...
-                history.Add(CloneTableau(table));
-            }
+            var (isOptimal, isUnbounded) = RunPrimalLoop(table, history);
 
             // Build the result
-            var result = new SolverResult();
             result.FinalTableau = table;
             result.IterationHistory = history;
             result.IsUnbounded = isUnbounded;
-            result.IsOptimal = !isUnbounded;
-
+            result.IsOptimal = isOptimal;
             if (!isUnbounded)
             {
                 // Objective value sits in the bottom-right corner of the objective row
@@ -274,6 +266,24 @@ namespace LPR381.Solving
         }
         #endregion
 
+        #region RunPrimalLoop
+        private (bool isOptimal, bool isUnbounded) RunPrimalLoop(Tableau table, List<Tableau> history)
+        {
+            while (true)
+            {
+                int col = FindPivotColumn(table);
+                if (col == -1) return (true, false); // optimal
+
+                int row = FindPivotRow(table, col);
+                if (row == -1) return (false, true); // unbounded
+
+                Pivot(table, row, col);
+                table.TableNumber = "t-" + (history.Count + 1);
+                history.Add(CloneTableau(table));
+            }
+        }
+        #endregion
+
         #region Pivot
         private void Pivot(Tableau table, int pivotRow, int pivotCol) 
         {
@@ -365,10 +375,73 @@ namespace LPR381.Solving
         }
         #endregion
 
+        #region DualSimplex
+        private bool DualSimplex(Tableau table, List<Tableau> history)
+        {
+            while (true)
+            {
+                int rowNr = FindDualPivotRow(table);
+                if (rowNr == -1)
+                {
+                    return false; // no negative RHS left -> feasible, done
+                }
 
-        private void DualSimplex(Tableau table, List<Tableau> history) { }
-        private int FindDualPivotRow(Tableau table) { return -1; }
-        private int FindDualPivotCol(Tableau table, int pivotRow) { return -1; }
+                int colNr = FindDualPivotCol(table, rowNr);
+                if (colNr == -1)
+                {
+                    return true; // no valid pivot column -> infeasible
+                }
+
+                Pivot(table, rowNr, colNr);
+                table.TableNumber = "t-" + (history.Count + 1);
+                history.Add(CloneTableau(table));
+            }
+        }
+        #endregion
+
+        #region FindDualPivotRow
+        private int FindDualPivotRow(Tableau table)
+        {
+            int pivotRow = -1;
+
+            for (int i = 1; i < table.Rows.Count; i++)
+            {
+                if ((table.Rows[i][(table.Rows[i].Count - 1)] >= 0))
+                {
+                    continue;
+                }
+                if (pivotRow == -1 || (table.Rows[pivotRow][table.Rows[pivotRow].Count - 1]) > (table.Rows[i][table.Rows[i].Count - 1]))
+                {
+                    pivotRow = i;
+                }
+            }
+            return pivotRow;
+        }
+        #endregion
+
+        #region FindDualPivotCol
+        private int FindDualPivotCol(Tableau table, int pivotRow)
+        {
+            int pivotCol = -1;
+
+            for (int i = 0; i < table.Rows[0].Count - 1; i++)
+            {
+                if (table.Rows[pivotRow][i] >= 0)
+                {
+                    continue;
+                }
+                if (pivotCol == -1)
+                {
+                    pivotCol = i;
+                }
+                if (Math.Abs((table.Rows[0][pivotCol]) / (table.Rows[pivotRow][pivotCol])) > Math.Abs((table.Rows[0][i]) / (table.Rows[pivotRow][i])))
+                {
+                    pivotCol = i;
+                }
+            }
+            return pivotCol;
+        }
+        #endregion
 
         #region CloneTableau
         private Tableau CloneTableau(Tableau table)

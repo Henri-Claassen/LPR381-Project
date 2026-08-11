@@ -132,23 +132,36 @@ namespace LPR381
                 dgwMainDisplay.Rows.Add();
             }
 
-            // Final summary: Z value + all original decision variables
-            int summaryHeaderRow = dgwMainDisplay.Rows.Add();
-            dgwMainDisplay.Rows[summaryHeaderRow].Cells[0].Value = "Final Values";
-            dgwMainDisplay.Rows[summaryHeaderRow].Cells[1].Value = "Z";   // NEW
-
-            int summaryRow = dgwMainDisplay.Rows.Add();
-            dgwMainDisplay.Rows[summaryRow].Cells[1].Value = Math.Round(result.ObjectiveValue, 3).ToString("G7");   // NEW
-
-            for (int j = 0; j < model.DecisionVariableCount; j++)
+            // Show history and final z-value
+            if (result.IsOptimal)
             {
-                dgwMainDisplay.Rows[summaryHeaderRow].Cells[j + 2].Value = "x" + (j + 1);   // shifted +2 to leave room for Z at index 1
-                dgwMainDisplay.Rows[summaryRow].Cells[j + 2].Value = Math.Round(result.VariableValues[j], 3).ToString("G7");
-            }
+                int summaryHeaderRow = dgwMainDisplay.Rows.Add();
+                dgwMainDisplay.Rows[summaryHeaderRow].Cells[0].Value = "Final Values";
+                dgwMainDisplay.Rows[summaryHeaderRow].Cells[1].Value = "Z";
 
-            dgwMainDisplay.Rows[summaryHeaderRow].DefaultCellStyle.BackColor = Color.LightGreen;
-            dgwMainDisplay.Rows[summaryRow].DefaultCellStyle.BackColor = Color.LightGreen;
-            dgwMainDisplay.Rows[summaryHeaderRow].DefaultCellStyle.Font = new Font(dgwMainDisplay.Font, FontStyle.Bold);
+                int summaryRow = dgwMainDisplay.Rows.Add();
+                dgwMainDisplay.Rows[summaryRow].Cells[1].Value = Math.Round(result.ObjectiveValue, 3).ToString("G7");
+
+                for (int j = 0; j < model.DecisionVariableCount; j++)
+                {
+                    dgwMainDisplay.Rows[summaryHeaderRow].Cells[j + 2].Value = "x" + (j + 1);
+                    dgwMainDisplay.Rows[summaryRow].Cells[j + 2].Value = Math.Round(result.VariableValues[j], 3).ToString("G7");
+                }
+
+                dgwMainDisplay.Rows[summaryHeaderRow].DefaultCellStyle.BackColor = Color.LightGreen;
+                dgwMainDisplay.Rows[summaryRow].DefaultCellStyle.BackColor = Color.LightGreen;
+                dgwMainDisplay.Rows[summaryHeaderRow].DefaultCellStyle.Font = new Font(dgwMainDisplay.Font, FontStyle.Bold);
+            }
+            else
+            {
+                // Show red for infeasible or unbounded
+                int statusRow = dgwMainDisplay.Rows.Add();
+                string statusText = result.IsInfeasible ? "INFEASIBLE — no solution exists" : "UNBOUNDED — no optimal solution exists";
+                dgwMainDisplay.Rows[statusRow].Cells[0].Value = statusText;
+
+                dgwMainDisplay.Rows[statusRow].DefaultCellStyle.ForeColor = Color.Red;
+                dgwMainDisplay.Rows[statusRow].DefaultCellStyle.Font = new Font(dgwMainDisplay.Font, FontStyle.Bold);
+            }
         }
         #endregion
 
