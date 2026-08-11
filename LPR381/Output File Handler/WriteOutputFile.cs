@@ -10,6 +10,7 @@ namespace LPR381.Output_File_Handler
 {
     internal class WriteOutputFile
     {
+        #region WriteResultToFile
         public static void WriteResultToFile(SolverResult result, string outputFilePath) 
         {
             using (StreamWriter writer = new StreamWriter(outputFilePath))
@@ -35,6 +36,9 @@ namespace LPR381.Output_File_Handler
                 }
             }
         }
+        #endregion
+
+        #region WriteTableau
         private static void WriteTableau(StreamWriter writer, Tableau tableau) 
         {
             writer.Write(tableau.TableNumber.PadRight(10));
@@ -56,5 +60,7 @@ namespace LPR381.Output_File_Handler
             writer.WriteLine("Basic Variables: " + string.Join(", ", tableau.BasicVariables));
      
         }
+        #endregion
+
     }
 }
