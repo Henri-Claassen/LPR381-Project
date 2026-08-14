@@ -40,5 +40,10 @@ namespace LPR381
         {
             this.Close();
         }
+
+        private void btnNLSolve_Click(object sender, EventArgs e)
+        {
+            //Code for solving the nonlinear programming problem will go here
+        }
     }
 }

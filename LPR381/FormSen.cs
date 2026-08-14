@@ -1,4 +1,6 @@
-﻿using System;
+﻿using LPR381.Input_File_Handler;
+using LPR381.UserDisplay;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -27,6 +29,22 @@ namespace LPR381
         private void btnSenExit_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void btnSenSolve_Click(object sender, EventArgs e)
+        {
+            //Code for solving the sensitivity analysis problem will go here
+        }
+
+        private void btnSenChooseFile_Click(object sender, EventArgs e)
+        {
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                string filePath = openFileDialog1.FileName;
+                Display.lines = HandleInput.ReadModelFile(filePath);
+                Display.showUserInput(Display.lines, dgwSenDisplay);
+            }
+
         }
     }
 }

@@ -70,7 +70,7 @@
             this.dgvNLDisplay.Name = "dgvNLDisplay";
             this.dgvNLDisplay.RowHeadersWidth = 51;
             this.dgvNLDisplay.RowTemplate.Height = 24;
-            this.dgvNLDisplay.Size = new System.Drawing.Size(1312, 604);
+            this.dgvNLDisplay.Size = new System.Drawing.Size(1312, 611);
             this.dgvNLDisplay.TabIndex = 2;
             // 
             // btnNLChooseFile
@@ -94,6 +94,7 @@
             this.btnNLSolve.TabIndex = 4;
             this.btnNLSolve.Text = "Solve using Non-Linear";
             this.btnNLSolve.UseVisualStyleBackColor = true;
+            this.btnNLSolve.Click += new System.EventHandler(this.btnNLSolve_Click);
             // 
             // openFileDialog1
             // 
