@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System">
-      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -54,10 +54,33 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Form2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form2.Designer.cs">
+      <DependentUpon>Form2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormNL.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormNL.Designer.cs">
+      <DependentUpon>FormNL.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FormSen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormSen.Designer.cs">
+      <DependentUpon>FormSen.cs</DependentUpon>
+    </Compile>
     <Compile Include="Input File Handler\HandleInput.cs" />
     <Compile Include="Output File Handler\WriteOutputFile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Sensitivity Analysis\AnalyzeSensitivity.cs" />
     <Compile Include="Solving\BranchNode.cs" />
     <Compile Include="Solving\Solver.cs" />
@@ -65,18 +88,24 @@
     <Compile Include="Solving\Tableau.cs" />
     <Compile Include="Stored Info\Constraints.cs" />
     <Compile Include="Stored Info\LpModel.cs" />
+    <Compile Include="UserDisplay\Display.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Form2.resx">
+      <DependentUpon>Form2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormNL.resx">
+      <DependentUpon>FormNL.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormSen.resx">
+      <DependentUpon>FormSen.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -89,6 +118,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Main Background.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Main Background1.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Form Background11.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Form Background.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

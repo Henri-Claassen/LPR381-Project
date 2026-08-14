@@ -34,22 +34,28 @@
             this.btnSimplex = new System.Windows.Forms.Button();
             this.btnBranchAndBound = new System.Windows.Forms.Button();
             this.btnKnapsack = new System.Windows.Forms.Button();
+            this.btnMainF1 = new System.Windows.Forms.Button();
+            this.btnExit1 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgwMainDisplay)).BeginInit();
             this.SuspendLayout();
             // 
             // dgwMainDisplay
             // 
             this.dgwMainDisplay.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgwMainDisplay.Location = new System.Drawing.Point(306, 12);
+            this.dgwMainDisplay.Location = new System.Drawing.Point(0, 48);
+            this.dgwMainDisplay.Margin = new System.Windows.Forms.Padding(4);
             this.dgwMainDisplay.Name = "dgwMainDisplay";
-            this.dgwMainDisplay.Size = new System.Drawing.Size(652, 537);
+            this.dgwMainDisplay.RowHeadersWidth = 51;
+            this.dgwMainDisplay.Size = new System.Drawing.Size(1314, 600);
             this.dgwMainDisplay.TabIndex = 0;
             // 
             // btnChooseFile
             // 
-            this.btnChooseFile.Location = new System.Drawing.Point(95, 115);
+            this.btnChooseFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnChooseFile.Location = new System.Drawing.Point(0, -1);
+            this.btnChooseFile.Margin = new System.Windows.Forms.Padding(4);
             this.btnChooseFile.Name = "btnChooseFile";
-            this.btnChooseFile.Size = new System.Drawing.Size(75, 23);
+            this.btnChooseFile.Size = new System.Drawing.Size(133, 32);
             this.btnChooseFile.TabIndex = 1;
             this.btnChooseFile.Text = "Choose File";
             this.btnChooseFile.UseVisualStyleBackColor = true;
@@ -61,9 +67,11 @@
             // 
             // btnSimplex
             // 
-            this.btnSimplex.Location = new System.Drawing.Point(95, 158);
+            this.btnSimplex.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSimplex.Location = new System.Drawing.Point(132, -1);
+            this.btnSimplex.Margin = new System.Windows.Forms.Padding(4);
             this.btnSimplex.Name = "btnSimplex";
-            this.btnSimplex.Size = new System.Drawing.Size(119, 23);
+            this.btnSimplex.Size = new System.Drawing.Size(176, 32);
             this.btnSimplex.TabIndex = 2;
             this.btnSimplex.Text = "Solve using Simplex";
             this.btnSimplex.UseVisualStyleBackColor = true;
@@ -71,32 +79,69 @@
             // 
             // btnBranchAndBound
             // 
-            this.btnBranchAndBound.Location = new System.Drawing.Point(95, 199);
+            this.btnBranchAndBound.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBranchAndBound.Location = new System.Drawing.Point(306, -1);
+            this.btnBranchAndBound.Margin = new System.Windows.Forms.Padding(4);
             this.btnBranchAndBound.Name = "btnBranchAndBound";
-            this.btnBranchAndBound.Size = new System.Drawing.Size(181, 23);
+            this.btnBranchAndBound.Size = new System.Drawing.Size(266, 32);
             this.btnBranchAndBound.TabIndex = 3;
             this.btnBranchAndBound.Text = "Solve Using Branch And Bound";
             this.btnBranchAndBound.UseVisualStyleBackColor = true;
             // 
             // btnKnapsack
             // 
-            this.btnKnapsack.Location = new System.Drawing.Point(95, 246);
+            this.btnKnapsack.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnKnapsack.Location = new System.Drawing.Point(571, -1);
+            this.btnKnapsack.Margin = new System.Windows.Forms.Padding(4);
             this.btnKnapsack.Name = "btnKnapsack";
-            this.btnKnapsack.Size = new System.Drawing.Size(150, 23);
+            this.btnKnapsack.Size = new System.Drawing.Size(210, 32);
             this.btnKnapsack.TabIndex = 4;
             this.btnKnapsack.Text = "Solve Using Knapsack";
             this.btnKnapsack.UseVisualStyleBackColor = true;
             // 
+            // btnMainF1
+            // 
+            this.btnMainF1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnMainF1.Location = new System.Drawing.Point(1138, -1);
+            this.btnMainF1.Name = "btnMainF1";
+            this.btnMainF1.Size = new System.Drawing.Size(120, 32);
+            this.btnMainF1.TabIndex = 5;
+            this.btnMainF1.Text = "Main Menu";
+            this.btnMainF1.UseVisualStyleBackColor = true;
+            this.btnMainF1.Click += new System.EventHandler(this.btnMainF1_Click);
+            // 
+            // btnExit1
+            // 
+            this.btnExit1.BackColor = System.Drawing.Color.Red;
+            this.btnExit1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.btnExit1.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnExit1.FlatAppearance.BorderSize = 0;
+            this.btnExit1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnExit1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnExit1.ForeColor = System.Drawing.Color.White;
+            this.btnExit1.Location = new System.Drawing.Point(1254, -1);
+            this.btnExit1.Name = "btnExit1";
+            this.btnExit1.Size = new System.Drawing.Size(60, 31);
+            this.btnExit1.TabIndex = 6;
+            this.btnExit1.Text = "Exit";
+            this.btnExit1.UseVisualStyleBackColor = false;
+            this.btnExit1.Click += new System.EventHandler(this.btnExit1_Click);
+            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(984, 561);
+            this.BackgroundImage = global::LPR381.Properties.Resources.Form_Background;
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.ClientSize = new System.Drawing.Size(1312, 689);
+            this.Controls.Add(this.btnExit1);
+            this.Controls.Add(this.btnMainF1);
             this.Controls.Add(this.btnKnapsack);
             this.Controls.Add(this.btnBranchAndBound);
             this.Controls.Add(this.btnSimplex);
             this.Controls.Add(this.btnChooseFile);
             this.Controls.Add(this.dgwMainDisplay);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.dgwMainDisplay)).EndInit();
@@ -112,6 +157,8 @@
         private System.Windows.Forms.Button btnSimplex;
         private System.Windows.Forms.Button btnBranchAndBound;
         private System.Windows.Forms.Button btnKnapsack;
+        private System.Windows.Forms.Button btnMainF1;
+        private System.Windows.Forms.Button btnExit1;
     }
 }
 
