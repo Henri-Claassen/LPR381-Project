@@ -76,9 +76,6 @@ namespace LPR381.Solving
 
                 for (int j = 0; j < model.DecisionVariableCount; j++)
                 {
-                    // Check if variable is restricted to integer/binary
-                    // Since prompt says "to solve arbitrary Integer Programming models", we assume all decision vars should be integers here,
-                    // or we could check model.SignRestrictions if present. For safety, we enforce on all decision vars.
                     double val = currentResult.VariableValues[j];
                     double fractionalPart = GetFractionalPart(val);
 
