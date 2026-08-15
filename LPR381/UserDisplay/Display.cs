@@ -164,7 +164,7 @@ namespace LPR381.UserDisplay
             if (!Directory.Exists(downloadsFolder))
                 Directory.CreateDirectory(downloadsFolder);
 
-            string fileName = "LP_Output_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".txt";
+            string fileName = "LP_Output_" + DateTime.Now.ToString("yyyy-MM-dd_HH.mm.ss") + ".txt";
             return Path.Combine(downloadsFolder, fileName);
         }
         #endregion

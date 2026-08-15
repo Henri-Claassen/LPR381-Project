@@ -48,13 +48,23 @@ namespace LPR381
             Solver solver = new Solver();
             SolverResult result = solver.SolvePrimalSimplex(model);
 
+            if (result.SwitchedToDualSimplex)
+            {
+                MessageBox.Show(
+                    "This problem couldn't start with standard Primal Simplex due to negative RHS values, so Dual Simplex was used automatically to find a feasible starting point.",
+                    "Switched to Dual Simplex",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Information
+                );
+            }
+
             Display.PopulateFullHistory(result, model, dgwMainDisplay);
             WriteOutputFile.WriteResultToFile(result, Display.GetOutputFilePath());
         }
 
         private void btnExit1_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Environment.Exit(0);
         }
 
         private void btnMainF1_Click(object sender, EventArgs e)
@@ -62,6 +72,14 @@ namespace LPR381
             FormMain_Menu main_Menu = new FormMain_Menu();
             main_Menu.Show();
             this.Close();
+        }
+
+        private void btnF1CanonicalForm_Click(object sender, EventArgs e)
+        {
+            LpModel model = HandleInput.ParseModel(Display.lines);
+            Solver solver = new Solver();
+            Tableau table = solver.BuildCanonicalForm(model);
+            Display.populateMainDisplay(table, dgwMainDisplay);
         }
     }
 }

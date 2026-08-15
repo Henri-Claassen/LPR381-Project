@@ -79,23 +79,37 @@ namespace LPR381.Input_File_Handler
             if (relationSign.StartsWith("<="))
             {
                 constraint.Relation = "<=";
-                constraint.RHS = Convert.ToDouble(relationSign.Substring(2)); //If there is an error here the <=40 doesnt have a space in the text file it looks like this <= 40 need to add fail safe against that
+                string rhsText = relationSign.Substring(2); //If there is an error here the <=40 doesnt have a space in the text file it looks like this <= 40 need to add fail safe against that//
+                if (string.IsNullOrWhiteSpace(rhsText))
+                {
+                    rhsText = splitLine[numVars + 1]; // Get the next part if it's empty
+                    constraint.RHS = Convert.ToDouble(rhsText);
+                }
             }
             else if (relationSign.StartsWith(">="))
             {
                 constraint.Relation = ">=";
-                constraint.RHS = Convert.ToDouble(relationSign.Substring(2));
+                string rhsText = relationSign.Substring(2);
+                if(string.IsNullOrWhiteSpace(rhsText)) 
+                {
+                    rhsText = splitLine[numVars + 1];
+                    constraint.RHS = Convert.ToDouble(rhsText);
+                }
             }
             else if (relationSign.StartsWith("="))
             {
                 constraint.Relation = "=";
-                constraint.RHS = Convert.ToDouble(relationSign.Substring(1));
+                string rhsText = relationSign.Substring(1);
+                if (string.IsNullOrWhiteSpace(rhsText))
+                {
+                    rhsText = splitLine[numVars + 1];
+                    constraint.RHS = Convert.ToDouble(rhsText);
+                }
             }
             else
             {
                 throw new FormatException($"Unrecognized relation in constraint line: \"{line}\"");
             }
-
             return constraint;
         }
         #endregion

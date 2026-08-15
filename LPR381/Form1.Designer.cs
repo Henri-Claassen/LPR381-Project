@@ -36,6 +36,7 @@
             this.btnKnapsack = new System.Windows.Forms.Button();
             this.btnMainF1 = new System.Windows.Forms.Button();
             this.btnExit1 = new System.Windows.Forms.Button();
+            this.btnF1CanonicalForm = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgwMainDisplay)).BeginInit();
             this.SuspendLayout();
             // 
@@ -127,6 +128,17 @@
             this.btnExit1.UseVisualStyleBackColor = false;
             this.btnExit1.Click += new System.EventHandler(this.btnExit1_Click);
             // 
+            // btnF1CanonicalForm
+            // 
+            this.btnF1CanonicalForm.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnF1CanonicalForm.Location = new System.Drawing.Point(780, -1);
+            this.btnF1CanonicalForm.Name = "btnF1CanonicalForm";
+            this.btnF1CanonicalForm.Size = new System.Drawing.Size(153, 32);
+            this.btnF1CanonicalForm.TabIndex = 8;
+            this.btnF1CanonicalForm.Text = "Canonical Form";
+            this.btnF1CanonicalForm.UseVisualStyleBackColor = true;
+            this.btnF1CanonicalForm.Click += new System.EventHandler(this.btnF1CanonicalForm_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -134,6 +146,7 @@
             this.BackgroundImage = global::LPR381.Properties.Resources.Form_Background;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1312, 689);
+            this.Controls.Add(this.btnF1CanonicalForm);
             this.Controls.Add(this.btnExit1);
             this.Controls.Add(this.btnMainF1);
             this.Controls.Add(this.btnKnapsack);
@@ -159,6 +172,7 @@
         private System.Windows.Forms.Button btnKnapsack;
         private System.Windows.Forms.Button btnMainF1;
         private System.Windows.Forms.Button btnExit1;
+        private System.Windows.Forms.Button btnF1CanonicalForm;
     }
 }
 

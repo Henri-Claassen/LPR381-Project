@@ -38,12 +38,17 @@ namespace LPR381
 
         private void btnNLExit_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Environment.Exit(0);
         }
 
         private void btnNLSolve_Click(object sender, EventArgs e)
         {
             //Code for solving the nonlinear programming problem will go here
+        }
+
+        private void btnNLShadowPrice_Click(object sender, EventArgs e)
+        {
+            //Shadow Price calculation for nonlinear programming will be put here
         }
     }
 }

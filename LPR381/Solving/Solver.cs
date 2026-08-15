@@ -22,6 +22,7 @@ namespace LPR381.Solving
 
             if (hasNegativeRHS)
             {
+                result.SwitchedToDualSimplex = true;
                 bool infeasible = DualSimplex(table, history);
                 if (infeasible)
                 {

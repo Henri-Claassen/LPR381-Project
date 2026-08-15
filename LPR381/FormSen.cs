@@ -28,7 +28,7 @@ namespace LPR381
 
         private void btnSenExit_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Environment.Exit(0);
         }
 
         private void btnSenSolve_Click(object sender, EventArgs e)
@@ -45,6 +45,11 @@ namespace LPR381
                 Display.showUserInput(Display.lines, dgwSenDisplay);
             }
 
+        }
+
+        private void btnSenShadowPrice_Click(object sender, EventArgs e)
+        {
+            //Code for Shadow Price calculation will go here
         }
     }
 }

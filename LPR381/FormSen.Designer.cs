@@ -34,6 +34,8 @@
             this.btnSenExit = new System.Windows.Forms.Button();
             this.dgwSenDisplay = new System.Windows.Forms.DataGridView();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
+            this.btnSenRange = new System.Windows.Forms.Button();
+            this.btnSenShadowPrice = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgwSenDisplay)).BeginInit();
             this.SuspendLayout();
             // 
@@ -100,6 +102,27 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // btnSenRange
+            // 
+            this.btnSenRange.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSenRange.Location = new System.Drawing.Point(390, -1);
+            this.btnSenRange.Name = "btnSenRange";
+            this.btnSenRange.Size = new System.Drawing.Size(118, 33);
+            this.btnSenRange.TabIndex = 5;
+            this.btnSenRange.Text = "Find Range";
+            this.btnSenRange.UseVisualStyleBackColor = true;
+            // 
+            // btnSenShadowPrice
+            // 
+            this.btnSenShadowPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSenShadowPrice.Location = new System.Drawing.Point(500, -1);
+            this.btnSenShadowPrice.Name = "btnSenShadowPrice";
+            this.btnSenShadowPrice.Size = new System.Drawing.Size(185, 33);
+            this.btnSenShadowPrice.TabIndex = 6;
+            this.btnSenShadowPrice.Text = "Display Shadow Price";
+            this.btnSenShadowPrice.UseVisualStyleBackColor = true;
+            this.btnSenShadowPrice.Click += new System.EventHandler(this.btnSenShadowPrice_Click);
+            // 
             // FormSen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -107,6 +130,8 @@
             this.BackgroundImage = global::LPR381.Properties.Resources.Form_Background;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1312, 689);
+            this.Controls.Add(this.btnSenShadowPrice);
+            this.Controls.Add(this.btnSenRange);
             this.Controls.Add(this.dgwSenDisplay);
             this.Controls.Add(this.btnSenExit);
             this.Controls.Add(this.btnSenMM);
@@ -127,5 +152,7 @@
         private System.Windows.Forms.Button btnSenExit;
         private System.Windows.Forms.DataGridView dgwSenDisplay;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
+        private System.Windows.Forms.Button btnSenRange;
+        private System.Windows.Forms.Button btnSenShadowPrice;
     }
 }
