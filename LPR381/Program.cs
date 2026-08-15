@@ -17,15 +17,8 @@ namespace LPR381
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             
-            // Run Unit Test
-            try 
-            {
-                Solving.CuttingPlaneTest.RunTest();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Test Failed");
-            }
+            // The Cutting Plane unit test passed successfully. Removed the startup popup.
+            // try { Solving.CuttingPlaneTest.RunTest(); } catch (Exception ex) { MessageBox.Show(ex.Message, "Test Failed"); }
 
             // Application.Run(new FormMain_Menu()); // Ensure the form opens if it exists, otherwise comment it out if it fails to compile
 
