@@ -1,4 +1,4 @@
-﻿namespace LPR381
+namespace LPR381
 {
     partial class Form1
     {
@@ -37,6 +37,7 @@
             this.btnMainF1 = new System.Windows.Forms.Button();
             this.btnExit1 = new System.Windows.Forms.Button();
             this.btnF1CanonicalForm = new System.Windows.Forms.Button();
+            this.btnCuttingPlane = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgwMainDisplay)).BeginInit();
             this.SuspendLayout();
             // 
@@ -139,6 +140,17 @@
             this.btnF1CanonicalForm.UseVisualStyleBackColor = true;
             this.btnF1CanonicalForm.Click += new System.EventHandler(this.btnF1CanonicalForm_Click);
             // 
+            // btnCuttingPlane
+            // 
+            this.btnCuttingPlane.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnCuttingPlane.Location = new System.Drawing.Point(933, -1);
+            this.btnCuttingPlane.Name = "btnCuttingPlane";
+            this.btnCuttingPlane.Size = new System.Drawing.Size(200, 32);
+            this.btnCuttingPlane.TabIndex = 9;
+            this.btnCuttingPlane.Text = "Solve Using Cutting Plane";
+            this.btnCuttingPlane.UseVisualStyleBackColor = true;
+            this.btnCuttingPlane.Click += new System.EventHandler(this.btnCuttingPlane_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -149,6 +161,7 @@
             this.Controls.Add(this.btnF1CanonicalForm);
             this.Controls.Add(this.btnExit1);
             this.Controls.Add(this.btnMainF1);
+            this.Controls.Add(this.btnCuttingPlane);
             this.Controls.Add(this.btnKnapsack);
             this.Controls.Add(this.btnBranchAndBound);
             this.Controls.Add(this.btnSimplex);
@@ -173,6 +186,7 @@
         private System.Windows.Forms.Button btnMainF1;
         private System.Windows.Forms.Button btnExit1;
         private System.Windows.Forms.Button btnF1CanonicalForm;
+        private System.Windows.Forms.Button btnCuttingPlane;
     }
 }
 

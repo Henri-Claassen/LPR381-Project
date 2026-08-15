@@ -1,4 +1,4 @@
-﻿using LPR381.Input_File_Handler;
+using LPR381.Input_File_Handler;
 using LPR381.Output_File_Handler;
 using LPR381.Solving;
 using LPR381.Stored_Info;
@@ -57,6 +57,21 @@ namespace LPR381
                     MessageBoxIcon.Information
                 );
             }
+
+            Display.PopulateFullHistory(result, model, dgwMainDisplay);
+            WriteOutputFile.WriteResultToFile(result, Display.GetOutputFilePath());
+        }
+
+        private void btnCuttingPlane_Click(object sender, EventArgs e)
+        {
+            if (Display.lines == null)
+            {
+                MessageBox.Show("Load a file first.");
+                return;
+            }
+            LpModel model = HandleInput.ParseModel(Display.lines);
+            Solver solver = new Solver();
+            SolverResult result = solver.SolveCuttingPlane(model);
 
             Display.PopulateFullHistory(result, model, dgwMainDisplay);
             WriteOutputFile.WriteResultToFile(result, Display.GetOutputFilePath());
