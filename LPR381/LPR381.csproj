@@ -83,6 +83,7 @@
     </Compile>
     <Compile Include="Sensitivity Analysis\AnalyzeSensitivity.cs" />
     <Compile Include="Solving\BranchNode.cs" />
+    <Compile Include="Solving\CuttingPlaneTest.cs" />
     <Compile Include="Solving\Solver.cs" />
     <Compile Include="Solving\SolverResult.cs" />
     <Compile Include="Solving\Tableau.cs" />
