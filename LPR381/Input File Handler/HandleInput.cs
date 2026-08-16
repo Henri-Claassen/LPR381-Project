@@ -83,18 +83,18 @@ namespace LPR381.Input_File_Handler
                 if (string.IsNullOrWhiteSpace(rhsText))
                 {
                     rhsText = splitLine[numVars + 1]; // Get the next part if it's empty
-                    constraint.RHS = Convert.ToDouble(rhsText);
                 }
+                constraint.RHS = Convert.ToDouble(rhsText);
             }
             else if (relationSign.StartsWith(">="))
             {
                 constraint.Relation = ">=";
                 string rhsText = relationSign.Substring(2);
-                if(string.IsNullOrWhiteSpace(rhsText)) 
+                if (string.IsNullOrWhiteSpace(rhsText))
                 {
                     rhsText = splitLine[numVars + 1];
-                    constraint.RHS = Convert.ToDouble(rhsText);
                 }
+                constraint.RHS = Convert.ToDouble(rhsText);
             }
             else if (relationSign.StartsWith("="))
             {
@@ -103,8 +103,8 @@ namespace LPR381.Input_File_Handler
                 if (string.IsNullOrWhiteSpace(rhsText))
                 {
                     rhsText = splitLine[numVars + 1];
-                    constraint.RHS = Convert.ToDouble(rhsText);
                 }
+                constraint.RHS = Convert.ToDouble(rhsText);
             }
             else
             {
