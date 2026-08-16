@@ -63,7 +63,227 @@ namespace LPR381.Solving
         #endregion
 
         public SolverResult SolveRevisedSimplex(LpModel model) { /* TODO */ return null; }
-        public SolverResult SolveBranchAndBound(LpModel model) { /* TODO — builds/walks a BranchNode tree, calls SolvePrimalSimplex per node */ return null; }
+        #region SolveBranchAndBound
+        public SolverResult SolveBranchAndBound(LpModel model) {
+            double incumbent = model.IsMaximization ? double.NegativeInfinity : double.PositiveInfinity;
+             var integerVarIndices = GetIntegerVariableIndices(model); // only these should trigger branching
+            BranchNode rootNode = new BranchNode {
+                SubProblemModel = model,
+                Parent = null,
+                BranchDescription = "Root",
+                IsFathomed = false,
+                FathomReason = null,
+                SubProblemResult = SolvePrimalSimplex(model)
+            };
+
+            var result = new SolverResult { AllNodes = new List<BranchNode> { rootNode } };
+            result.AllNodes = new List<BranchNode> { rootNode };
+            if (!rootNode.SubProblemResult.IsOptimal){
+                result.IsInfeasible = rootNode.SubProblemResult.IsInfeasible;
+                result.IsUnbounded = rootNode.SubProblemResult.IsUnbounded;
+                return result;
+            }
+
+            var (isIntegerFeasible, fathomReason, objectiveValue) =
+                TestBranchSolution(rootNode.SubProblemResult, incumbent, model.IsMaximization, integerVarIndices);
+
+            if (isIntegerFeasible){
+                rootNode.IsFathomed = true;
+                rootNode.FathomReason = fathomReason;
+                incumbent = objectiveValue;
+                result.ObjectiveValue = objectiveValue;
+                result.VariableValues = rootNode.SubProblemResult.VariableValues;
+                return result; // nothing left to branch on
+            }
+                else
+                {
+                     var nodesToSolve = new List<BranchNode> { rootNode };
+                    List<BranchNode> currentNodes = new List<BranchNode> { rootNode };
+                    while (nodesToSolve.Count>0)
+                    {
+                        var node = nodesToSolve[0];
+                    nodesToSolve.RemoveAt(0); // BFS; use a Stack<BranchNode> instead for DFS if you prefer
+
+                    int branchVarIndex = -1;
+                    double branchValue = 0, bestFractionalDistance = double.MaxValue;
+
+                    foreach (int j in integerVarIndices)
+                    {
+                        if (j == -1) continue; // placeholder for non-integer vars, skip
+                        double value = node.SubProblemResult.VariableValues[j];
+                        if (Math.Abs(value - Math.Round(value)) < 1e-9) continue; // treat as integer within tolerance
+
+                        double dist = Math.Abs(value - Math.Floor(value) - 0.5);
+                        if (dist < bestFractionalDistance)
+                        {
+                            bestFractionalDistance = dist;
+                            branchVarIndex = j;
+                            branchValue = value;
+                        }
+                    }
+
+                    if (branchVarIndex == -1) continue; // shouldn't happen, but guards against a bad node
+
+                    var leftNode = new BranchNode
+                    {
+                        Parent = node,
+                        BranchDescription = $"x{branchVarIndex + 1} <= {Math.Floor(branchValue)}",
+                        IsFathomed = false
+                    };
+                    var rightNode = new BranchNode
+                    {
+                        Parent = node,
+                        BranchDescription = $"x{branchVarIndex + 1} >= {Math.Ceiling(branchValue)}",
+                        IsFathomed = false
+                    };
+
+                    SolveChildNode(node, leftNode, branchVarIndex, branchValue, true, model.DecisionVariableCount);
+                    SolveChildNode(node, rightNode, branchVarIndex, branchValue, false, model.DecisionVariableCount);
+
+                    result.AllNodes.Add(leftNode);
+                    result.AllNodes.Add(rightNode);
+
+                    foreach (var child in new[] { leftNode, rightNode })
+                    {
+                        if (child.IsFathomed) continue; // infeasible — SolveChildNode already flagged it
+
+                        var (childIsInt, childReason, childObj) =
+                            TestBranchSolution(child.SubProblemResult, incumbent, model.IsMaximization, integerVarIndices);
+
+                        bool better = model.IsMaximization ? childObj > incumbent : childObj < incumbent;
+
+                        if (!better)
+                        {
+                            child.IsFathomed = true;
+                            child.FathomReason = "worse than incumbent";
+                            continue;
+                        }
+
+                        if (childIsInt)
+                        {
+                            child.IsFathomed = true;
+                            child.FathomReason = "integer solution";
+                            incumbent = childObj;
+                            result.ObjectiveValue = childObj;
+                            result.VariableValues = child.SubProblemResult.VariableValues;
+                        }
+                        else
+                        {
+                            nodesToSolve.Add(child); // keep exploring — this is the queue growing correctly
+                        }
+                    }
+                }
+                return result;
+            }
+
+            
+             
+        }
+        private void SolveChildNode(BranchNode parent, BranchNode child, int branchVarIndex,
+                             double branchValue, bool isLeftBranch, int decisionVarCount)
+        {
+            Tableau nodeTableau = CloneTableau(parent.SubProblemResult.FinalTableau); // don't mutate parent!
+            AddBranchConstraint(nodeTableau, branchVarIndex, branchValue, isLeftBranch);
+
+            var history = new List<Tableau> { CloneTableau(nodeTableau) }; // t-i for THIS node only
+
+            bool infeasible = DualSimplex(nodeTableau, history); // appends only this node's pivots
+
+            if (infeasible)
+            {
+                child.IsFathomed = true;
+                child.FathomReason = "infeasible";
+                child.SubProblemResult = new SolverResult
+                {
+                    IsInfeasible = true,
+                    FinalTableau = nodeTableau,
+                    IterationHistory = history
+                };
+                return;
+            }
+
+            // Dual simplex only touches RHS feasibility, never the objective row,
+            // so once it terminates feasible, the node is also optimal — no primal cleanup needed.
+            int rhsCol = nodeTableau.Rows[0].Count - 1;
+            child.SubProblemResult = new SolverResult
+            {
+                IsOptimal = true,
+                FinalTableau = nodeTableau,
+                IterationHistory = history,
+                ObjectiveValue = nodeTableau.Rows[0][rhsCol],
+                VariableValues = ExtractSolution(nodeTableau, decisionVarCount)
+            };
+        }
+        private double[] ExtractSolution(Tableau table, int decisionVarCount)
+        {
+            int rhsCol = table.Rows[0].Count - 1;
+            var values = new double[decisionVarCount];
+            for (int j = 0; j < decisionVarCount; j++)
+            {
+                int r = table.BasicVariables.IndexOf(table.ColumnNames[j]);
+                values[j] = r == -1 ? 0 : table.Rows[r][rhsCol];
+            }
+            return values;
+        }
+        private void AddBranchConstraint(Tableau table, int variableIndex, double value, bool isLeftBranch)
+        {
+            string colName = "x" + (variableIndex + 1);
+            int varCol = table.ColumnNames.IndexOf(colName);
+            if (varCol == -1){ 
+                throw new InvalidOperationException("Branching variable column not found in tableau.");
+            }
+
+            int rowIndex = table.BasicVariables.IndexOf(colName);
+            if (rowIndex == -1){
+                throw new InvalidOperationException("Branching variable is not basic — can't branch on it.");
+            }
+
+            double bound = isLeftBranch ? Math.Floor(value) : Math.Ceiling(value);
+            double newRhs = isLeftBranch ? bound - value : value - bound; // always <= 0
+
+            // 1. Insert a new slack/excess column, before RHS, into EVERY existing row
+            int insertPos = table.ColumnNames.Count - 1;
+            string varName = (isLeftBranch ? "s" : "e") + table.ColumnNames.Count;
+            table.ColumnNames.Insert(insertPos, varName);
+            foreach (var row in table.Rows){
+                row.Insert(insertPos, 0.0);
+            }
+
+            // 2. Build the new row from the branching variable's basic row
+            var basicRow = table.Rows[rowIndex]; // already has the new 0 column from step 1
+            var newRow = new List<double>();
+            for (int k = 0; k < basicRow.Count - 1; k++) // exclude RHS
+            {
+                if (k == varCol){
+                    newRow.Add(0.0);
+                }
+                else if (k == insertPos){     
+                    newRow.Add(1.0);  // this row's own new slack
+                }
+                else{
+                    newRow.Add(isLeftBranch ? -basicRow[k] : basicRow[k]);
+                }
+            }
+            newRow.Add(newRhs);
+
+            table.Rows.Add(newRow);
+            table.BasicVariables.Add(varName); // new slack is basic in the new row
+            table.RowNames.Add("c" + table.RowNames.Count);
+        }
+
+        private (bool, string, double) TestBranchSolution(SolverResult r, double incumbent,
+            bool isMax, List<int> integerVarIndices)
+        {
+            bool isIntegerFeasible = true;
+            foreach (int j in integerVarIndices)
+            {
+                if (j == -1) continue;
+                double v = r.VariableValues[j];
+                if (Math.Abs(v - Math.Round(v)) > 1e-9) { isIntegerFeasible = false; break; }
+            }
+            return (isIntegerFeasible, isIntegerFeasible ? "integer solution" : "fractional", r.ObjectiveValue);
+        }
+        #endregion
         public SolverResult SolveCuttingPlane(LpModel model)
         {
             SolverResult currentResult = SolvePrimalSimplex(model);
@@ -258,7 +478,26 @@ namespace LPR381.Solving
         }
         #endregion
 
-        private List<int> GetIntegerVariableIndices(LpModel model) { return null; }
+        private List<int> GetIntegerVariableIndices(LpModel model) {
+            int count = model.SignRestrictions.Length;
+            var indices = new List<int>();
+            for (int i = 0; i < count; i++)
+            {
+                if (model.SignRestrictions[i] == "int")
+                {
+                    indices.Add(i);
+                }
+                else if (model.SignRestrictions[i] == "bin")
+                {
+                    indices.Add(i);
+                }
+                else
+                {
+                    indices.Add(-1); // Placeholder for non-integer variables
+                }
+            }
+            return indices;
+        }
 
         #region BuildCanonicalForm
         public Tableau BuildCanonicalForm(LpModel rawModel)
