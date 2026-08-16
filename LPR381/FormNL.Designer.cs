@@ -43,7 +43,7 @@
             this.btnNLMM.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnNLMM.Location = new System.Drawing.Point(1136, -1);
             this.btnNLMM.Name = "btnNLMM";
-            this.btnNLMM.Size = new System.Drawing.Size(120, 33);
+            this.btnNLMM.Size = new System.Drawing.Size(120, 32);
             this.btnNLMM.TabIndex = 0;
             this.btnNLMM.Text = "Main Menu";
             this.btnNLMM.UseVisualStyleBackColor = true;
@@ -91,9 +91,9 @@
             this.btnNLSolve.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnNLSolve.Location = new System.Drawing.Point(130, -1);
             this.btnNLSolve.Name = "btnNLSolve";
-            this.btnNLSolve.Size = new System.Drawing.Size(191, 32);
+            this.btnNLSolve.Size = new System.Drawing.Size(152, 32);
             this.btnNLSolve.TabIndex = 4;
-            this.btnNLSolve.Text = "Solve using Non-Linear";
+            this.btnNLSolve.Text = "Non-Linear Solve";
             this.btnNLSolve.UseVisualStyleBackColor = true;
             this.btnNLSolve.Click += new System.EventHandler(this.btnNLSolve_Click);
             // 
@@ -104,9 +104,9 @@
             // btnNLShadowPrice
             // 
             this.btnNLShadowPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnNLShadowPrice.Location = new System.Drawing.Point(319, -1);
+            this.btnNLShadowPrice.Location = new System.Drawing.Point(281, -1);
             this.btnNLShadowPrice.Name = "btnNLShadowPrice";
-            this.btnNLShadowPrice.Size = new System.Drawing.Size(189, 33);
+            this.btnNLShadowPrice.Size = new System.Drawing.Size(225, 32);
             this.btnNLShadowPrice.TabIndex = 5;
             this.btnNLShadowPrice.Text = "Display Shadow Price";
             this.btnNLShadowPrice.UseVisualStyleBackColor = true;

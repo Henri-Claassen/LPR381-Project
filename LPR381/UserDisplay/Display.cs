@@ -91,6 +91,7 @@ namespace LPR381.UserDisplay
 
                 dataGrid.Rows[headerRowIndex].DefaultCellStyle.BackColor = Color.LightGray;
                 dataGrid.Rows[headerRowIndex].DefaultCellStyle.Font = new Font(dataGrid.Font, FontStyle.Bold);
+                dataGrid.Rows[headerRowIndex].Tag = "header";
 
                 // Data rows
                 for (int i = 0; i < table.Rows.Count; i++)
@@ -99,6 +100,7 @@ namespace LPR381.UserDisplay
                     dataGrid.Rows[rowIndex].Cells[0].Value = table.RowNames[i];
                     for (int j = 0; j < table.Rows[i].Count; j++)
                         dataGrid.Rows[rowIndex].Cells[j + 1].Value = Math.Round(table.Rows[i][j], 3).ToString("G7");
+                    dataGrid.Rows[rowIndex].Tag = "data";
                 }
 
                 // BV row (names)
@@ -108,6 +110,7 @@ namespace LPR381.UserDisplay
                     dataGrid.Rows[bvRowIndex].Cells[i + 1].Value = table.BasicVariables[i];
 
                 dataGrid.Rows[bvRowIndex].DefaultCellStyle.BackColor = Color.LightBlue;
+                dataGrid.Rows[bvRowIndex].Tag = "bv";
 
                 // BV Values row — includes Z's value, aligned under the correct BV
                 int bvValRowIndex = dataGrid.Rows.Add();
@@ -116,6 +119,7 @@ namespace LPR381.UserDisplay
                     dataGrid.Rows[bvValRowIndex].Cells[i + 1].Value = Math.Round(table.Rows[i][rhsCol], 3).ToString("G7");
 
                 dataGrid.Rows[bvValRowIndex].DefaultCellStyle.BackColor = Color.LightCyan;
+                dataGrid.Rows[bvValRowIndex].Tag = "bvvalues";
 
                 // Spacer row between tables
                 dataGrid.Rows.Add();

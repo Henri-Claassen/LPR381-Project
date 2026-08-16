@@ -42,7 +42,7 @@
             // btnSenChooseFile
             // 
             this.btnSenChooseFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenChooseFile.Location = new System.Drawing.Point(0, -1);
+            this.btnSenChooseFile.Location = new System.Drawing.Point(-1, -1);
             this.btnSenChooseFile.Name = "btnSenChooseFile";
             this.btnSenChooseFile.Size = new System.Drawing.Size(133, 33);
             this.btnSenChooseFile.TabIndex = 0;
@@ -53,11 +53,11 @@
             // btnSenSolve
             // 
             this.btnSenSolve.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenSolve.Location = new System.Drawing.Point(130, -1);
+            this.btnSenSolve.Location = new System.Drawing.Point(129, -1);
             this.btnSenSolve.Name = "btnSenSolve";
-            this.btnSenSolve.Size = new System.Drawing.Size(267, 33);
+            this.btnSenSolve.Size = new System.Drawing.Size(208, 33);
             this.btnSenSolve.TabIndex = 1;
-            this.btnSenSolve.Text = "Solve using Sensitivity Analysis";
+            this.btnSenSolve.Text = "Sensitivity Analysis Solve";
             this.btnSenSolve.UseVisualStyleBackColor = true;
             this.btnSenSolve.Click += new System.EventHandler(this.btnSenSolve_Click);
             // 
@@ -105,17 +105,18 @@
             // btnSenRange
             // 
             this.btnSenRange.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenRange.Location = new System.Drawing.Point(390, -1);
+            this.btnSenRange.Location = new System.Drawing.Point(336, -1);
             this.btnSenRange.Name = "btnSenRange";
-            this.btnSenRange.Size = new System.Drawing.Size(118, 33);
+            this.btnSenRange.Size = new System.Drawing.Size(140, 33);
             this.btnSenRange.TabIndex = 5;
             this.btnSenRange.Text = "Find Range";
             this.btnSenRange.UseVisualStyleBackColor = true;
+            this.btnSenRange.Click += new System.EventHandler(this.btnSenRange_Click);
             // 
             // btnSenShadowPrice
             // 
             this.btnSenShadowPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenShadowPrice.Location = new System.Drawing.Point(500, -1);
+            this.btnSenShadowPrice.Location = new System.Drawing.Point(474, -1);
             this.btnSenShadowPrice.Name = "btnSenShadowPrice";
             this.btnSenShadowPrice.Size = new System.Drawing.Size(185, 33);
             this.btnSenShadowPrice.TabIndex = 6;

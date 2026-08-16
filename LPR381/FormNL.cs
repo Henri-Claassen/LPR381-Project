@@ -17,6 +17,36 @@ namespace LPR381
         public FormNL()
         {
             InitializeComponent();
+            dgvNLDisplay.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvNLDisplay.CellBeginEdit += dgvNLDisplay_CellBeginEdit;
+            dgvNLDisplay.CellEndEdit += dgvNLDisplay_CellEndEdit;
+
+        }
+
+        private void dgvNLDisplay_CellBeginEdit(object sender, DataGridViewCellCancelEventArgs e)
+        {
+            var row = dgvNLDisplay.Rows[e.RowIndex];
+
+            bool isEditableDataRow = row.Tag as string == "data";
+            bool isLabelColumn = e.ColumnIndex == 0;
+
+            if (!isEditableDataRow || isLabelColumn)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        private void dgvNLDisplay_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            var cell = dgvNLDisplay.Rows[e.RowIndex].Cells[e.ColumnIndex];
+            string newValue = cell.Value?.ToString();
+
+            if (!double.TryParse(newValue, out double parsedValue))
+            {
+                MessageBox.Show("Please enter a valid number.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cell.Value = "0";
+                return;
+            }
         }
 
         private void btnNLMM_Click(object sender, EventArgs e)
