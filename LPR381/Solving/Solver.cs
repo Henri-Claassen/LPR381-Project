@@ -97,6 +97,8 @@ namespace LPR381.Solving
             }
                 else
                 {
+                    result.IsOptimal = incumbent != (model.IsMaximization ? double.NegativeInfinity : double.PositiveInfinity);
+                    if (incumbent == (model.IsMaximization ? double.NegativeInfinity : double.PositiveInfinity)) result.FathomReason ??= "no integer-feasible solution found";
                      var nodesToSolve = new List<BranchNode> { rootNode };
                     List<BranchNode> currentNodes = new List<BranchNode> { rootNode };
                     while (nodesToSolve.Count>0)
@@ -122,7 +124,12 @@ namespace LPR381.Solving
                         }
                     }
 
-                    if (branchVarIndex == -1) continue; // shouldn't happen, but guards against a bad node
+                    if (branchVarIndex == -1)
+                    {
+                        node.IsFathomed = true;
+                        node.FathomReason = "No fractional integer variable found (unexpected)";
+                        continue;
+                    }
 
                     var leftNode = new BranchNode
                     {
@@ -407,8 +414,217 @@ namespace LPR381.Solving
             if (f > 1 - 1e-8) f = 0;
             return f;
         }
-        public SolverResult SolveKnapsackBranchAndBound(LpModel model) { /* TODO — separate bounding logic, not simplex-based */ return null; }
 
+
+        #region SolveKnapsackBranchAndBound
+        public SolverResult SolveKnapsackBranchAndBound(LpModel model) { 
+            var history = new List<KnapsackSubproblemTable>();
+
+            if (!IsKnapsackModel(model)) throw new InvalidOperationException("Model is not a valid knapsack problem.");
+            
+            var items = BuildKnapsackItems(model);
+            double capacity = model.Constraints[0].RHS;
+
+            double incumbent = double.NegativeInfinity;
+            double[] incumbentValues = null;
+
+            var rootNode = new BranchNode
+            {
+                SubProblemModel = model,
+                Parent = null,
+                BranchDescription = "Knapsack Root",
+                IsFathomed = false
+            };
+
+            var result = new SolverResult
+            {
+                AllNodes = new List<BranchNode> { rootNode },
+                KnapsackHistory = history,
+                IsUnbounded = false,
+                IsInfeasible = false
+            };
+
+            var nodesToSolve = new List<BranchNode> { rootNode };
+
+            while (nodesToSolve.Count > 0)
+            {
+                var node = nodesToSolve[0];
+                nodesToSolve.RemoveAt(0);
+
+                // Set variBle values for fixed-in and fixed-out items, and compute remaining capacity
+                double fixedValue = 0;
+                double remainingCapacity = capacity;
+                var candidateItems = new List<KnapsackItem>();
+
+                foreach (var item in items)
+                {
+                    //use the original index to check if the item is fixed in or out
+                    if (node.FixedIn.Contains(item.originalIndex))
+                    {
+                        fixedValue += item.value; //build rhs value for the knapsack problem
+                        remainingCapacity -= item.weight; //build the remaining capacity for the knapsack problem
+                    }
+                    else if (!node.FixedOut.Contains(item.originalIndex))
+                    {
+                        candidateItems.Add(item); //only add items that are not fixed out to the candidate list
+                    }
+                }
+
+                // Infeasible if fixed-in items alone exceed capacity
+                if (remainingCapacity < 0)
+                {
+                    node.IsFathomed = true;
+                    node.FathomReason = "infeasible";
+                    continue;
+                }
+
+                var (freeValues, freeValue, isFractional, branchVarIndex, table) =
+                    RunGreedyFill(candidateItems, remainingCapacity, node.BranchDescription, model.DecisionVariableCount);
+
+                double nodeObjective = fixedValue + freeValue;
+
+                // Merge fixed-in decisions (=1) into the full solution vector
+                var fullValues = (double[])freeValues.Clone();
+                foreach (int idx in node.FixedIn) fullValues[idx] = 1;
+                foreach (int idx in node.FixedOut) fullValues[idx] = 0;
+
+                table.ObjectiveValue = nodeObjective; // include fixed contribution in the displayed total
+                history.Add(table);
+                node.KnapsackTable = table;
+                node.BranchVariableIndex = branchVarIndex;
+                node.SubProblemResult = new SolverResult { IsOptimal = true, ObjectiveValue = nodeObjective, VariableValues = fullValues };
+
+                // Bound: prune if this node can't beat the incumbent
+                if (nodeObjective <= incumbent)
+                {
+                    node.IsFathomed = true;
+                    node.FathomReason = "worse than incumbent";
+                    continue;
+                }
+
+                if (!isFractional)
+                {
+                    node.IsFathomed = true;
+                    node.FathomReason = "integer solution";
+                    incumbent = nodeObjective;
+                    incumbentValues = fullValues;
+                    continue;
+                }
+                
+                // Branch on branchVarIndex
+                var excludeNode = new BranchNode
+                {
+                    Parent = node,
+                    BranchDescription = $"x{branchVarIndex + 1} = 0",
+                    FixedIn = new HashSet<int>(node.FixedIn),
+                    FixedOut = new HashSet<int>(node.FixedOut) { branchVarIndex }
+                };
+                var includeNode = new BranchNode
+                {
+                    Parent = node,
+                    BranchDescription = $"x{branchVarIndex + 1} = 1",
+                    FixedIn = new HashSet<int>(node.FixedIn) { branchVarIndex },
+                    FixedOut = new HashSet<int>(node.FixedOut)
+                };
+
+                result.AllNodes.Add(excludeNode);
+                result.AllNodes.Add(includeNode);
+                nodesToSolve.Add(excludeNode);
+                nodesToSolve.Add(includeNode);
+            }
+
+            result.IsOptimal = true;
+            result.ObjectiveValue = incumbent;
+            result.VariableValues = incumbentValues;
+            return result;
+        }
+
+        private List<KnapsackItem> BuildKnapsackItems(LpModel model)
+        {
+            var items = new List<KnapsackItem>();
+            for (int i = 0; i < model.DecisionVariableCount; i++)
+            {
+                items.Add(new KnapsackItem
+                {
+                    originalIndex = i,
+                    value = model.ObjectiveCoefficients[i],
+                    weight = model.Constraints[0].Coefficients[i]
+                });
+            }
+            return items;
+        }
+
+        private (double[] variableValues, double totalValue, bool isFractional, int branchVarIndex, KnapsackSubproblemTable table)
+        RunGreedyFill(List<KnapsackItem> candidateItems, double capacity, string nodeDescription, int totalItemCount){
+            var sortedItems = candidateItems.OrderByDescending(item => item.weight == 0 ? double.MaxValue : item.value / item.weight).ToList();
+
+            var variableValues = new double[totalItemCount];
+            double totalValue = 0;
+            double remainingCapacity = capacity;
+            bool fraction = false;
+            int branchVarIndex = -1;
+
+            var table = new KnapsackSubproblemTable
+            {
+                NodeDescription = nodeDescription,
+                Capacity = capacity
+            };
+
+            foreach (var item in sortedItems)//iterate through the sorted items and fill the knapsack greedily
+            {
+                double decision;
+                string status;
+
+                if (remainingCapacity <= 0)
+                {
+                    decision = 0;
+                    status = "excluded";
+                }
+                else if (item.weight <= remainingCapacity)
+                {
+                    decision = 1;
+                    totalValue += item.value;
+                    remainingCapacity -= item.weight;
+                    status = "taken";
+                }
+                else
+                {
+                    decision = remainingCapacity / item.weight;
+                    totalValue += decision * item.value;
+                    fraction = true;
+                    branchVarIndex = item.originalIndex;
+                    remainingCapacity = 0;
+                    status = "fractional";
+                }
+
+                variableValues[item.originalIndex] = decision; // store the decision for this item in the full solution vector
+
+                table.Rows.Add(new KnapsackTableRow //build the knapsack table row for this item
+                {
+                    ItemName = "x" + (item.originalIndex + 1),
+                    Value = item.value,
+                    Weight = item.weight,
+                    Ratio = item.weight == 0 ? double.PositiveInfinity : item.value / item.weight,
+                    Decision = decision,
+                    RemainingCapacityAfter = remainingCapacity,
+                    Status = status
+                });
+            }
+
+            table.ObjectiveValue = totalValue;
+            table.BranchVariableIndex = branchVarIndex;
+
+            return (variableValues, totalValue, fraction, branchVarIndex, table);
+        }
+        public bool IsKnapsackModel(LpModel model) {
+            if (model.Constraints.Count != 1 || !model.IsMaximization) return false;
+            var constraint = model.Constraints[0];
+            if (constraint.Relation != "<=") return false;
+            if (model.SignRestrictions.Any(s => s != "bin")) return false;
+            return true;
+        }
+            
+        #endregion
         #region Prepocessing SignRestrictions
         private LpModel PreprocessingSignRestrictions(LpModel model)
         {

@@ -15,5 +15,9 @@ namespace LPR381.Solving
         public string BranchDescription { get; set; }   // e.g. "x2 <= 3"
         public bool IsFathomed { get; set; }
         public string FathomReason { get; set; }         // "infeasible", "integer solution", "worse than incumbent"
+        public int BranchVariableIndex { get; set; } = -1;
+        public KnapsackSubproblemTable KnapsackTable { get; set; } 
+        public HashSet<int> FixedIn { get; set; } = new HashSet<int>();   // items forced to 1
+        public HashSet<int> FixedOut { get; set; } = new HashSet<int>();  // items forced to 0
     }
 }
