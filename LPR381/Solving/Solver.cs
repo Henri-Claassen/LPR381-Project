@@ -98,7 +98,6 @@ namespace LPR381.Solving
                 else
                 {
                     result.IsOptimal = incumbent != (model.IsMaximization ? double.NegativeInfinity : double.PositiveInfinity);
-                    if (incumbent == (model.IsMaximization ? double.NegativeInfinity : double.PositiveInfinity)) result.FathomReason ??= "no integer-feasible solution found";
                      var nodesToSolve = new List<BranchNode> { rootNode };
                     List<BranchNode> currentNodes = new List<BranchNode> { rootNode };
                     while (nodesToSolve.Count>0)

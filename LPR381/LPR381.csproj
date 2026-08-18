@@ -89,6 +89,7 @@
     <Compile Include="Solving\Tableau.cs" />
     <Compile Include="Stored Info\Constraints.cs" />
     <Compile Include="Stored Info\LpModel.cs" />
+	<Compile Include="Stored Info\Knapsack.cs" />
     <Compile Include="UserDisplay\Display.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
