@@ -89,6 +89,7 @@ namespace LPR381
             this.btnBranchAndBound.TabIndex = 3;
             this.btnBranchAndBound.Text = "Branch And Bound Solve";
             this.btnBranchAndBound.UseVisualStyleBackColor = true;
+            this.btnBranchAndBound.Click += new System.EventHandler(this.btnBranchAndBound_Click);
             // 
             // btnKnapsack
             // 
@@ -100,6 +101,7 @@ namespace LPR381
             this.btnKnapsack.TabIndex = 4;
             this.btnKnapsack.Text = "Knapsack Solve";
             this.btnKnapsack.UseVisualStyleBackColor = true;
+            this.btnKnapsack.Click += new System.EventHandler(this.btnKnapsack_Click);
             // 
             // btnMainF1
             // 

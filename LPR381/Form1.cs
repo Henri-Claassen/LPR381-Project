@@ -124,5 +124,78 @@ namespace LPR381
             Tableau table = solver.BuildCanonicalForm(model);
             Display.populateMainDisplay(table, dgwMainDisplay);
         }
+
+        private void btnBranchAndBound_Click(object sender, EventArgs e)
+        {
+            if (Display.lines == null)
+            {
+                MessageBox.Show("Load a file first.");
+                return;
+            }
+            try
+            {
+                LpModel model = HandleInput.ParseModel(Display.lines);
+                Solver solver = new Solver();
+                SolverResult result = solver.SolveBranchAndBound(model);
+
+                if (result.IsInfeasible)
+                {
+                    MessageBox.Show("This problem's LP relaxation is infeasible.", "Infeasible",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else if (result.IsUnbounded)
+                {
+                    MessageBox.Show("This problem's LP relaxation is unbounded.", "Unbounded",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else if (!result.IsOptimal)
+                {
+                    MessageBox.Show("No integer-feasible solution was found.", "No Solution",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+
+                Display.PopulateFullHistory(result, model, dgwMainDisplay);
+                WriteOutputFile.WriteResultToFile(result, Display.GetOutputFilePath());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while solving the problem: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            
+        }
+
+        private void btnKnapsack_Click(object sender, EventArgs e)
+        {
+            if (Display.lines == null)
+            {
+                MessageBox.Show("Load a file first.");
+                return;
+            }
+            try
+            {
+                LpModel model = HandleInput.ParseModel(Display.lines);
+                Solver solver = new Solver();
+
+                if (!solver.IsKnapsackModel(model))
+                {
+                    MessageBox.Show(
+                        "This model isn't a valid 0/1 knapsack problem. It must be a maximization with exactly one <= constraint and all binary variables.",
+                        "Invalid Model", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                SolverResult result = solver.SolveKnapsackBranchAndBound(model);
+
+                Display.PopulateFullHistory(result, model, dgwMainDisplay);
+                WriteOutputFile.WriteResultToFile(result, Display.GetOutputFilePath());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while solving the knapsack problem: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            
+        }
     }
 }

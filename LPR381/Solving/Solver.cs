@@ -97,7 +97,6 @@ namespace LPR381.Solving
             }
                 else
                 {
-                    result.IsOptimal = incumbent != (model.IsMaximization ? double.NegativeInfinity : double.PositiveInfinity);
                      var nodesToSolve = new List<BranchNode> { rootNode };
                     List<BranchNode> currentNodes = new List<BranchNode> { rootNode };
                     while (nodesToSolve.Count>0)
@@ -179,6 +178,7 @@ namespace LPR381.Solving
                         }
                     }
                 }
+                result.IsOptimal = incumbent != (model.IsMaximization ? double.NegativeInfinity : double.PositiveInfinity);
                 return result;
             }
 
@@ -290,131 +290,6 @@ namespace LPR381.Solving
             return (isIntegerFeasible, isIntegerFeasible ? "integer solution" : "fractional", r.ObjectiveValue);
         }
         #endregion
-        public SolverResult SolveCuttingPlane(LpModel model)
-        {
-            SolverResult currentResult = SolvePrimalSimplex(model);
-
-            while (currentResult.IsOptimal && !currentResult.IsInfeasible && !currentResult.IsUnbounded)
-            {
-                bool allIntegers = true;
-                int targetVarIndex = -1;
-                double minDistanceToHalf = double.MaxValue;
-
-                for (int j = 0; j < model.DecisionVariableCount; j++)
-                {
-                    double val = currentResult.VariableValues[j];
-                    double fractionalPart = GetFractionalPart(val);
-
-                    if (fractionalPart > 1e-5) // Not an integer
-                    {
-                        allIntegers = false;
-                        
-                        double dist = Math.Abs(fractionalPart - 0.5);
-                        
-                        // Tie breaker: lower subscript (lower j). Since we iterate j=0,1,2..., 
-                        // strictly less (<) naturally keeps the lower subscript in case of a tie.
-                        if (dist < minDistanceToHalf - 1e-6) 
-                        {
-                            minDistanceToHalf = dist;
-                            targetVarIndex = j;
-                        }
-                    }
-                }
-
-                if (allIntegers)
-                {
-                    return currentResult; // Optimal integer solution found!
-                }
-
-                Tableau t = currentResult.FinalTableau;
-                
-                // If sign restrictions added temp col names like x1', x1" this needs care, but VariableValues[j] corresponds to TempColNames mapping.
-                // Assuming targetVarIndex corresponds to ColumnNames[targetVarIndex] since they are added first.
-                string varName = t.ColumnNames[targetVarIndex];
-                int rowIdx = t.BasicVariables.IndexOf(varName);
-
-                if (rowIdx == -1) 
-                    break; // Failsafe
-
-                int totalCols = t.Rows[0].Count;
-                List<double> cutRow = new List<double>(new double[totalCols + 1]); 
-                
-                int cutColIndex = totalCols - 1; // Insert before RHS
-                
-                t.ColumnNames.Insert(cutColIndex, "s_cut_" + (t.Rows.Count));
-                
-                for (int i = 0; i < t.Rows.Count; i++)
-                {
-                    t.Rows[i].Insert(cutColIndex, 0.0);
-                }
-                
-                totalCols++;
-                int rhsCol = totalCols - 1;
-                
-                double b = t.Rows[rowIdx][rhsCol];
-                double b_frac = GetFractionalPart(b);
-                
-                for (int j = 0; j < totalCols; j++)
-                {
-                    if (j == cutColIndex)
-                    {
-                        cutRow[j] = 1.0; 
-                    }
-                    else if (j == rhsCol)
-                    {
-                        cutRow[j] = -b_frac;
-                    }
-                    else
-                    {
-                        double a = t.Rows[rowIdx][j];
-                        double a_frac = GetFractionalPart(a);
-                        cutRow[j] = -a_frac;
-                    }
-                }
-                
-                t.Rows.Add(cutRow);
-                t.RowNames.Add("cut_" + (t.Rows.Count - 1));
-                t.BasicVariables.Add(t.ColumnNames[cutColIndex]);
-                
-                t.TableNumber = "t-" + (currentResult.IterationHistory.Count + 1);
-                currentResult.IterationHistory.Add(CloneTableau(t));
-                
-                bool infeasible = DualSimplex(t, currentResult.IterationHistory);
-                if (infeasible)
-                {
-                    currentResult.IsInfeasible = true;
-                    currentResult.IsOptimal = false;
-                    return currentResult;
-                }
-                
-                var (isOptimal, isUnbounded) = RunPrimalLoop(t, currentResult.IterationHistory);
-                
-                currentResult.FinalTableau = t;
-                currentResult.IsUnbounded = isUnbounded;
-                currentResult.IsOptimal = isOptimal;
-                
-                if (isOptimal && !isUnbounded)
-                {
-                    currentResult.ObjectiveValue = t.Rows[0][rhsCol];
-                    for (int j = 0; j < model.DecisionVariableCount; j++)
-                    {
-                        int basicRowIndex = t.BasicVariables.IndexOf(t.ColumnNames[j]);
-                        currentResult.VariableValues[j] = basicRowIndex == -1 ? 0 : t.Rows[basicRowIndex][rhsCol];
-                    }
-                }
-            }
-
-            return currentResult;
-        }
-
-        private double GetFractionalPart(double v)
-        {
-            double f = v - Math.Floor(v + 1e-8);
-            if (f > 1 - 1e-8) f = 0;
-            return f;
-        }
-
-
         #region SolveKnapsackBranchAndBound
         public SolverResult SolveKnapsackBranchAndBound(LpModel model) { 
             var history = new List<KnapsackSubproblemTable>();
@@ -624,6 +499,133 @@ namespace LPR381.Solving
         }
             
         #endregion
+
+        public SolverResult SolveCuttingPlane(LpModel model)
+        {
+            SolverResult currentResult = SolvePrimalSimplex(model);
+
+            while (currentResult.IsOptimal && !currentResult.IsInfeasible && !currentResult.IsUnbounded)
+            {
+                bool allIntegers = true;
+                int targetVarIndex = -1;
+                double minDistanceToHalf = double.MaxValue;
+
+                for (int j = 0; j < model.DecisionVariableCount; j++)
+                {
+                    double val = currentResult.VariableValues[j];
+                    double fractionalPart = GetFractionalPart(val);
+
+                    if (fractionalPart > 1e-5) // Not an integer
+                    {
+                        allIntegers = false;
+                        
+                        double dist = Math.Abs(fractionalPart - 0.5);
+                        
+                        // Tie breaker: lower subscript (lower j). Since we iterate j=0,1,2..., 
+                        // strictly less (<) naturally keeps the lower subscript in case of a tie.
+                        if (dist < minDistanceToHalf - 1e-6) 
+                        {
+                            minDistanceToHalf = dist;
+                            targetVarIndex = j;
+                        }
+                    }
+                }
+
+                if (allIntegers)
+                {
+                    return currentResult; // Optimal integer solution found!
+                }
+
+                Tableau t = currentResult.FinalTableau;
+                
+                // If sign restrictions added temp col names like x1', x1" this needs care, but VariableValues[j] corresponds to TempColNames mapping.
+                // Assuming targetVarIndex corresponds to ColumnNames[targetVarIndex] since they are added first.
+                string varName = t.ColumnNames[targetVarIndex];
+                int rowIdx = t.BasicVariables.IndexOf(varName);
+
+                if (rowIdx == -1) 
+                    break; // Failsafe
+
+                int totalCols = t.Rows[0].Count;
+                List<double> cutRow = new List<double>(new double[totalCols + 1]); 
+                
+                int cutColIndex = totalCols - 1; // Insert before RHS
+                
+                t.ColumnNames.Insert(cutColIndex, "s_cut_" + (t.Rows.Count));
+                
+                for (int i = 0; i < t.Rows.Count; i++)
+                {
+                    t.Rows[i].Insert(cutColIndex, 0.0);
+                }
+                
+                totalCols++;
+                int rhsCol = totalCols - 1;
+                
+                double b = t.Rows[rowIdx][rhsCol];
+                double b_frac = GetFractionalPart(b);
+                
+                for (int j = 0; j < totalCols; j++)
+                {
+                    if (j == cutColIndex)
+                    {
+                        cutRow[j] = 1.0; 
+                    }
+                    else if (j == rhsCol)
+                    {
+                        cutRow[j] = -b_frac;
+                    }
+                    else
+                    {
+                        double a = t.Rows[rowIdx][j];
+                        double a_frac = GetFractionalPart(a);
+                        cutRow[j] = -a_frac;
+                    }
+                }
+                
+                t.Rows.Add(cutRow);
+                t.RowNames.Add("cut_" + (t.Rows.Count - 1));
+                t.BasicVariables.Add(t.ColumnNames[cutColIndex]);
+                
+                t.TableNumber = "t-" + (currentResult.IterationHistory.Count + 1);
+                currentResult.IterationHistory.Add(CloneTableau(t));
+                
+                bool infeasible = DualSimplex(t, currentResult.IterationHistory);
+                if (infeasible)
+                {
+                    currentResult.IsInfeasible = true;
+                    currentResult.IsOptimal = false;
+                    return currentResult;
+                }
+                
+                var (isOptimal, isUnbounded) = RunPrimalLoop(t, currentResult.IterationHistory);
+                
+                currentResult.FinalTableau = t;
+                currentResult.IsUnbounded = isUnbounded;
+                currentResult.IsOptimal = isOptimal;
+                
+                if (isOptimal && !isUnbounded)
+                {
+                    currentResult.ObjectiveValue = t.Rows[0][rhsCol];
+                    for (int j = 0; j < model.DecisionVariableCount; j++)
+                    {
+                        int basicRowIndex = t.BasicVariables.IndexOf(t.ColumnNames[j]);
+                        currentResult.VariableValues[j] = basicRowIndex == -1 ? 0 : t.Rows[basicRowIndex][rhsCol];
+                    }
+                }
+            }
+
+            return currentResult;
+        }
+
+        private double GetFractionalPart(double v)
+        {
+            double f = v - Math.Floor(v + 1e-8);
+            if (f > 1 - 1e-8) f = 0;
+            return f;
+        }
+
+
+        
         #region Prepocessing SignRestrictions
         private LpModel PreprocessingSignRestrictions(LpModel model)
         {
