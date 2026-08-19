@@ -62,6 +62,53 @@ namespace LPR381.Solving
         }
         #endregion
 
+        //Repivot code, that uses the existing solver code in order for it to pivot off of that starting at the given tableau instead of building the model
+        #region ContinueFromEditedRegion
+        public SolverResult SolveFromEditedTableau(Tableau editedTable, int decisionVariableCount)
+        {
+            Tableau table = CloneTableau(editedTable);
+            table.TableNumber = "t-i";
+            var history = new List<Tableau> { CloneTableau(table) };
+
+            int rhsCol = table.Rows[0].Count - 1;
+            bool hasNegativeRHS = table.Rows.Skip(1).Any(row => row[rhsCol] < 0);
+            var result = new SolverResult();
+
+            if (hasNegativeRHS)
+            {
+                result.SwitchedToDualSimplex = true;
+                bool infeasible = DualSimplex(table, history);
+                if (infeasible)
+                {
+                    result.IsInfeasible = true;
+                    result.IsOptimal = false;
+                    result.FinalTableau = table;
+                    result.IterationHistory = history;
+                    return result;
+                }
+            }
+
+            var (isOptimal, isUnbounded) = RunPrimalLoop(table, history);
+
+            result.FinalTableau = table;
+            result.IterationHistory = history;
+            result.IsUnbounded = isUnbounded;
+            result.IsOptimal = isOptimal;
+            if (!isUnbounded)
+            {
+                result.ObjectiveValue = table.Rows[0][rhsCol];
+                result.VariableValues = new double[decisionVariableCount];
+                for (int j = 0; j < decisionVariableCount; j++)
+                {
+                    int basicRowIndex = table.BasicVariables.IndexOf(table.ColumnNames[j]);
+                    result.VariableValues[j] = basicRowIndex == -1 ? 0 : table.Rows[basicRowIndex][rhsCol];
+                }
+            }
+
+            return result;
+        }
+        #endregion
+
         public SolverResult SolveRevisedSimplex(LpModel model) { /* TODO */ return null; }
         #region SolveBranchAndBound
         public SolverResult SolveBranchAndBound(LpModel model) {

@@ -56,10 +56,11 @@ namespace LPR381.UserDisplay
             {
                 dataGrid.Columns.Add(col, col);
             }
-            for (int i = 0; i < table.Rows.Count; i++)
+            for (int i = 0; i < table.Rows.Count; i++)//tags the cells in the program as data so it can be edited
             {
                 int rowIndex = dataGrid.Rows.Add();
                 dataGrid.Rows[rowIndex].Cells["TableNumber"].Value = table.RowNames[i];
+                dataGrid.Rows[rowIndex].Tag = "data";
 
                 for (int j = 0; j < table.Rows[i].Count; j++)
                 {

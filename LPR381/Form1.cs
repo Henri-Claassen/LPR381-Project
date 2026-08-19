@@ -122,6 +122,10 @@ namespace LPR381
             LpModel model = HandleInput.ParseModel(Display.lines);
             Solver solver = new Solver();
             Tableau table = solver.BuildCanonicalForm(model);
+
+            canonicalTableau = table;
+            canonicalModel = model;
+
             Display.populateMainDisplay(table, dgwMainDisplay);
         }
 
@@ -196,6 +200,60 @@ namespace LPR381
                 return;
             }
             
+        }
+
+        private Tableau canonicalTableau;
+        private LpModel canonicalModel;
+
+        private void btnNewPivot_Click(object sender, EventArgs e)
+        {
+            if (canonicalTableau == null)
+            {
+                MessageBox.Show("Generate the Canonical Form first.");
+                return;
+            }
+
+            try
+            {
+                Tableau editedTable = ReadTableauFromGrid(canonicalTableau, dgwMainDisplay);
+
+                Solver solver = new Solver();
+                SolverResult result = solver.SolveFromEditedTableau(editedTable, canonicalModel.DecisionVariableCount);
+
+                Display.PopulateFullHistory(result, canonicalModel, dgwMainDisplay);
+                WriteOutputFile.WriteResultToFile(result, Display.GetOutputFilePath());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private Tableau ReadTableauFromGrid(Tableau template, DataGridView grid)
+        {
+            var table = new Tableau
+            {
+                TableNumber = "t-i",
+                IsMaximization = template.IsMaximization,
+                ColumnNames = new List<string>(template.ColumnNames),
+                RowNames = new List<string>(template.RowNames),
+                BasicVariables = new List<string>(template.BasicVariables)
+            };
+
+            for (int i = 0; i < template.Rows.Count; i++)
+            {
+                var row = new List<double>();
+                for (int j = 0; j < template.Rows[i].Count; j++)
+                {
+                    string cellValue = grid.Rows[i].Cells[j + 1].Value?.ToString();
+                    if (!double.TryParse(cellValue, out double parsed))
+                        throw new InvalidOperationException($"Invalid number in row {i + 1}, column {j + 1}.");
+                    row.Add(parsed);
+                }
+                table.Rows.Add(row);
+            }
+
+            return table;
         }
     }
 }

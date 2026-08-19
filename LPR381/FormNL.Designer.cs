@@ -89,7 +89,7 @@
             // btnNLSolve
             // 
             this.btnNLSolve.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnNLSolve.Location = new System.Drawing.Point(130, -1);
+            this.btnNLSolve.Location = new System.Drawing.Point(129, -1);
             this.btnNLSolve.Name = "btnNLSolve";
             this.btnNLSolve.Size = new System.Drawing.Size(152, 32);
             this.btnNLSolve.TabIndex = 4;
@@ -104,7 +104,7 @@
             // btnNLShadowPrice
             // 
             this.btnNLShadowPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnNLShadowPrice.Location = new System.Drawing.Point(281, -1);
+            this.btnNLShadowPrice.Location = new System.Drawing.Point(280, -1);
             this.btnNLShadowPrice.Name = "btnNLShadowPrice";
             this.btnNLShadowPrice.Size = new System.Drawing.Size(225, 32);
             this.btnNLShadowPrice.TabIndex = 5;

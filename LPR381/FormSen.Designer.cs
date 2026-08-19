@@ -53,7 +53,7 @@
             // btnSenSolve
             // 
             this.btnSenSolve.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenSolve.Location = new System.Drawing.Point(129, -1);
+            this.btnSenSolve.Location = new System.Drawing.Point(128, -1);
             this.btnSenSolve.Name = "btnSenSolve";
             this.btnSenSolve.Size = new System.Drawing.Size(208, 33);
             this.btnSenSolve.TabIndex = 1;
@@ -105,7 +105,7 @@
             // btnSenRange
             // 
             this.btnSenRange.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenRange.Location = new System.Drawing.Point(336, -1);
+            this.btnSenRange.Location = new System.Drawing.Point(335, -1);
             this.btnSenRange.Name = "btnSenRange";
             this.btnSenRange.Size = new System.Drawing.Size(140, 33);
             this.btnSenRange.TabIndex = 5;
@@ -116,7 +116,7 @@
             // btnSenShadowPrice
             // 
             this.btnSenShadowPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenShadowPrice.Location = new System.Drawing.Point(474, -1);
+            this.btnSenShadowPrice.Location = new System.Drawing.Point(473, -1);
             this.btnSenShadowPrice.Name = "btnSenShadowPrice";
             this.btnSenShadowPrice.Size = new System.Drawing.Size(185, 33);
             this.btnSenShadowPrice.TabIndex = 6;
