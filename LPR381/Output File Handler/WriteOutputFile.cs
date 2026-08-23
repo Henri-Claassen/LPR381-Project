@@ -28,6 +28,42 @@ namespace LPR381.Output_File_Handler
         }
         #endregion
 
+        #region AppendResultToFile
+        // Used by sensitivity analysis "apply change" operations so every change made
+        // after the initial solve is appended to the same output file, not overwritten.
+        public static void AppendResultToFile(SolverResult result, string outputFilePath, string header)
+        {
+            using (StreamWriter writer = new StreamWriter(outputFilePath, append: true))
+            {
+                writer.WriteLine();
+                writer.WriteLine("=== " + header + " ===");
+                writer.WriteLine();
+
+                if (result.AllNodes != null && result.AllNodes.Count > 0)
+                {
+                    WriteBranchAndBoundResult(writer, result);
+                }
+                else
+                {
+                    WriteSimplexResult(writer, result);
+                }
+            }
+        }
+        #endregion
+
+        #region AppendTextToFile
+        // Used for sensitivity operations that don't produce a full SolverResult
+        // (ranges, shadow prices, duality strength, the dual model description).
+        public static void AppendTextToFile(string outputFilePath, string text)
+        {
+            using (StreamWriter writer = new StreamWriter(outputFilePath, append: true))
+            {
+                writer.WriteLine();
+                writer.WriteLine(text);
+            }
+        }
+        #endregion
+
         #region WriteSimplexResult
         private static void WriteSimplexResult(StreamWriter writer, SolverResult result)
         {
