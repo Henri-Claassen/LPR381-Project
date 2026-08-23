@@ -29,6 +29,11 @@ namespace LPR381
         private int? selectedVariableIndex;
         private int? selectedConstraintIndex;
 
+        // Which of the two the LAST click was actually about — lets one "Find Range"
+        // button show the right thing instead of needing a separate button per kind.
+        private enum SelectionKind { None, Variable, Constraint }
+        private SelectionKind lastSelectionKind = SelectionKind.None;
+
         // Every applied change / range query after Solve gets appended here.
         private string sensitivityFilePath;
 
@@ -89,17 +94,36 @@ namespace LPR381
             }
 
             string columnName = FindColumnNameAbove(e.RowIndex, e.ColumnIndex);
-            if (TryParseVariableIndex(columnName, out int varIndex) && varIndex < currentModel.DecisionVariableCount)
-            {
-                selectedVariableIndex = varIndex;
-            }
 
-            if (rowTag == "data")
+            if (rowTag == "header")
             {
-                string rowLabel = row.Cells[0].Value?.ToString();
-                if (TryParseConstraintIndex(rowLabel, out int constraintIndex) && constraintIndex < currentModel.Constraints.Count)
+                // Clicking a column header is unambiguously "I want this variable".
+                if (TryParseVariableIndex(columnName, out int varIndex) && varIndex < currentModel.DecisionVariableCount)
                 {
-                    selectedConstraintIndex = constraintIndex;
+                    selectedVariableIndex = varIndex;
+                    lastSelectionKind = SelectionKind.Variable;
+                }
+            }
+            else // rowTag == "data"
+            {
+                bool isRowLabelCell = e.ColumnIndex == 0;
+                bool isRhsCell = string.Equals(columnName, "RHS", StringComparison.OrdinalIgnoreCase);
+
+                if (isRowLabelCell || isRhsCell)
+                {
+                    // Clicking the row's own label, or its RHS value, means "I want this constraint".
+                    string rowLabel = row.Cells[0].Value?.ToString();
+                    if (TryParseConstraintIndex(rowLabel, out int constraintIndex) && constraintIndex < currentModel.Constraints.Count)
+                    {
+                        selectedConstraintIndex = constraintIndex;
+                        lastSelectionKind = SelectionKind.Constraint;
+                    }
+                }
+                else if (TryParseVariableIndex(columnName, out int varIndex) && varIndex < currentModel.DecisionVariableCount)
+                {
+                    // Clicking a coefficient inside a variable's column means "I want this variable".
+                    selectedVariableIndex = varIndex;
+                    lastSelectionKind = SelectionKind.Variable;
                 }
             }
 
@@ -168,7 +192,10 @@ namespace LPR381
         {
             string varPart = selectedVariableIndex.HasValue ? "x" + (selectedVariableIndex.Value + 1) : "none";
             string cPart = selectedConstraintIndex.HasValue ? "c" + (selectedConstraintIndex.Value + 1) : "none";
-            lblSenSelection.Text = $"Selected variable: {varPart}    |    Selected constraint: {cPart}    (click a cell in the tableau to change selection)";
+            string findRangeTarget = lastSelectionKind == SelectionKind.Variable ? varPart + " (variable)"
+                : lastSelectionKind == SelectionKind.Constraint ? cPart + " (RHS)"
+                : "none";
+            lblSenSelection.Text = $"Selected variable: {varPart}    |    Selected constraint: {cPart}    |    Find Range will show: {findRangeTarget}";
         }
         #endregion
 
@@ -202,6 +229,7 @@ namespace LPR381
 
                 selectedVariableIndex = null;
                 selectedConstraintIndex = null;
+                lastSelectionKind = SelectionKind.None;
                 UpdateSelectionLabel();
 
                 if (currentResult.SwitchedToDualSimplex)
@@ -256,6 +284,7 @@ namespace LPR381
                 analyzer = null;
                 selectedVariableIndex = null;
                 selectedConstraintIndex = null;
+                lastSelectionKind = SelectionKind.None;
                 sensitivityFilePath = null;
                 UpdateSelectionLabel();
             }
@@ -290,22 +319,70 @@ namespace LPR381
         }
         #endregion
 
-        #region Variable range / apply change (basic or non-basic, auto-detected)
-        private void btnSenRangeVar_Click(object sender, EventArgs e)
+        #region Find Range (one button — shows NBV, BV, or RHS range depending on what was clicked)
+        private void btnSenFindRange_Click(object sender, EventArgs e)
         {
-            if (!EnsureSolved() || !EnsureVariableSelected())
+            if (!EnsureSolved())
             {
                 return;
             }
 
+            if (lastSelectionKind == SelectionKind.Variable && selectedVariableIndex.HasValue)
+            {
+                ShowVariableRange(selectedVariableIndex.Value);
+            }
+            else if (lastSelectionKind == SelectionKind.Constraint && selectedConstraintIndex.HasValue)
+            {
+                ShowRHSRange(selectedConstraintIndex.Value);
+            }
+            else
+            {
+                MessageBox.Show(
+                    "Click a variable's column (its header, or any coefficient under it) for a variable range, " +
+                    "or a constraint's row label / RHS cell for an RHS range — then press Find Range again.",
+                    "No Selection", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+        }
+
+        private void ShowVariableRange(int j)
+        {
             try
             {
-                int j = selectedVariableIndex.Value;
                 string label = "x" + (j + 1);
                 bool isBasic = currentResult.FinalTableau.BasicVariables.Contains(label);
-                Range range = isBasic ? analyzer.GetBasicVariableRange(j) : analyzer.GetNonBasicVariableRange(j);
+                var sb = new StringBuilder();
 
-                string message = $"Range for {label} ({(isBasic ? "basic" : "non-basic")}):\nLower Bound: {FormatBound(range.LowerBound)}\nUpper Bound: {FormatBound(range.UpperBound)}";
+                if (isBasic)
+                {
+                    Range range = analyzer.GetBasicVariableRange(j);
+                    sb.AppendLine($"{label} is a BASIC VARIABLE (BV).");
+                    sb.AppendLine();
+                    sb.AppendLine("Objective coefficient range — how far this coefficient can move while the current basis stays optimal:");
+                    sb.AppendLine($"[{FormatBound(range.LowerBound)}, {FormatBound(range.UpperBound)}]");
+                }
+                else
+                {
+                    Range objRange = analyzer.GetNonBasicVariableRange(j);
+                    sb.AppendLine($"{label} is a NON-BASIC VARIABLE (NBV).");
+                    sb.AppendLine();
+                    sb.AppendLine("Objective coefficient range — how far this coefficient can move before it becomes worth bringing into the basis:");
+                    sb.AppendLine($"[{FormatBound(objRange.LowerBound)}, {FormatBound(objRange.UpperBound)}]");
+
+                    try
+                    {
+                        Range colRange = analyzer.GetVariableColumnRange(j);
+                        sb.AppendLine();
+                        sb.AppendLine("Column scale-factor range — how much its constraint coefficients can be scaled (1.0 = unchanged) while it stays non-basic:");
+                        sb.AppendLine($"[{FormatBound(colRange.LowerBound)}, {FormatBound(colRange.UpperBound)}]");
+                    }
+                    catch
+                    {
+                        // Column ranging can fail in edge cases (e.g. an all-zero column) —
+                        // the objective-coefficient range above is still valid and shown.
+                    }
+                }
+
+                string message = sb.ToString();
                 MessageBox.Show(message, "Variable Range", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 AppendToSensitivityLog(message);
             }
@@ -315,6 +392,25 @@ namespace LPR381
             }
         }
 
+        private void ShowRHSRange(int i)
+        {
+            try
+            {
+                Range range = analyzer.GetRHSRange(i);
+                string message = $"c{i + 1} is a CONSTRAINT RHS.\n\n" +
+                    "RHS range — how far the right-hand side can move while the current basis stays optimal:\n" +
+                    $"[{FormatBound(range.LowerBound)}, {FormatBound(range.UpperBound)}]";
+                MessageBox.Show(message, "RHS Range", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                AppendToSensitivityLog(message);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        #endregion
+
+        #region Apply variable change (basic or non-basic, auto-detected)
         private void btnSenApplyVar_Click(object sender, EventArgs e)
         {
             if (!EnsureSolved() || !EnsureVariableSelected())
@@ -324,8 +420,13 @@ namespace LPR381
 
             int j = selectedVariableIndex.Value;
             string label = "x" + (j + 1);
+            bool isBasic = currentResult.FinalTableau.BasicVariables.Contains(label);
 
-            string input = ShowInputDialog($"Enter the new objective coefficient for {label}:", "Apply Variable Change");
+            string input = ShowInputDialog(
+                $"Apply a new objective coefficient to {label} ({(isBasic ? "currently basic" : "currently non-basic")}) and re-solve the model with it.\n" +
+                $"Current coefficient: {currentModel.ObjectiveCoefficients[j]}\n\n" +
+                "Enter the new coefficient.\nExample: 4",
+                "Apply Variable Change");
             if (string.IsNullOrWhiteSpace(input))
             {
                 return;
@@ -339,12 +440,14 @@ namespace LPR381
 
             try
             {
-                bool isBasic = currentResult.FinalTableau.BasicVariables.Contains(label);
                 SolverResult changedResult = isBasic
                     ? analyzer.ApplyBasicVariableChange(j, newValue)
                     : analyzer.ApplyNonBasicVariableChange(j, newValue);
 
-                DisplayAndLogChange($"Applied change: {label} objective coefficient -> {newValue}", changedResult, currentModel);
+                LpModel newModel = CloneModel(currentModel);
+                newModel.ObjectiveCoefficients[j] = newValue;
+
+                ApplyModelChange($"Applied change: {label} objective coefficient -> {newValue}", newModel, changedResult);
             }
             catch (Exception ex)
             {
@@ -353,28 +456,7 @@ namespace LPR381
         }
         #endregion
 
-        #region Constraint RHS range / apply change
-        private void btnSenRangeRHS_Click(object sender, EventArgs e)
-        {
-            if (!EnsureSolved() || !EnsureConstraintSelected())
-            {
-                return;
-            }
-
-            try
-            {
-                int i = selectedConstraintIndex.Value;
-                Range range = analyzer.GetRHSRange(i);
-                string message = $"Range for c{i + 1} RHS:\nLower Bound: {FormatBound(range.LowerBound)}\nUpper Bound: {FormatBound(range.UpperBound)}";
-                MessageBox.Show(message, "RHS Range", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                AppendToSensitivityLog(message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
+        #region Apply RHS change
         private void btnSenApplyRHS_Click(object sender, EventArgs e)
         {
             if (!EnsureSolved() || !EnsureConstraintSelected())
@@ -384,7 +466,11 @@ namespace LPR381
 
             int i = selectedConstraintIndex.Value;
 
-            string input = ShowInputDialog($"Enter the new RHS for c{i + 1}:", "Apply RHS Change");
+            string input = ShowInputDialog(
+                $"Apply a new right-hand-side to constraint c{i + 1} and re-solve the model with it.\n" +
+                $"Current RHS: {currentModel.Constraints[i].RHS}\n\n" +
+                "Enter the new RHS.\nExample: 10",
+                "Apply RHS Change");
             if (string.IsNullOrWhiteSpace(input))
             {
                 return;
@@ -399,7 +485,11 @@ namespace LPR381
             try
             {
                 SolverResult changedResult = analyzer.ApplyRHSChange(i, newRhs);
-                DisplayAndLogChange($"Applied change: c{i + 1} RHS -> {newRhs}", changedResult, currentModel);
+
+                LpModel newModel = CloneModel(currentModel);
+                newModel.Constraints[i].RHS = newRhs;
+
+                ApplyModelChange($"Applied change: c{i + 1} RHS -> {newRhs}", newModel, changedResult);
             }
             catch (Exception ex)
             {
@@ -408,29 +498,7 @@ namespace LPR381
         }
         #endregion
 
-        #region Non-basic variable column range / apply change
-        private void btnSenRangeCol_Click(object sender, EventArgs e)
-        {
-            if (!EnsureSolved() || !EnsureVariableSelected())
-            {
-                return;
-            }
-
-            try
-            {
-                int j = selectedVariableIndex.Value;
-                string label = "x" + (j + 1);
-                Range range = analyzer.GetVariableColumnRange(j);
-                string message = $"Scale-factor range for {label}'s column (multiplies its original coefficients):\nLower Bound: {FormatBound(range.LowerBound)}\nUpper Bound: {FormatBound(range.UpperBound)}";
-                MessageBox.Show(message, "Column Range", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                AppendToSensitivityLog(message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
+        #region Apply non-basic variable column change
         private void btnSenApplyCol_Click(object sender, EventArgs e)
         {
             if (!EnsureSolved() || !EnsureVariableSelected())
@@ -440,9 +508,13 @@ namespace LPR381
 
             int j = selectedVariableIndex.Value;
             string label = "x" + (j + 1);
+            double[] originalColumn = currentModel.Constraints.Select(c => c.Coefficients[j]).ToArray();
 
             string input = ShowInputDialog(
-                $"Enter new coefficients for {label}'s column, one per constraint (c1..c{currentModel.Constraints.Count}), comma-separated:",
+                $"Apply new technological coefficients to {label}'s column (how much of each constraint's resource one unit of {label} uses) and re-solve.\n" +
+                $"Current column: [{string.Join(", ", originalColumn)}]\n\n" +
+                $"Enter one new coefficient per constraint (c1..c{currentModel.Constraints.Count}), comma-separated.\n" +
+                "Example: 2,1,3",
                 "Apply Column Change");
             if (string.IsNullOrWhiteSpace(input))
             {
@@ -458,7 +530,14 @@ namespace LPR381
             try
             {
                 SolverResult changedResult = analyzer.ApplyVariableColumnChange(j, newColumn);
-                DisplayAndLogChange($"Applied column change: {label} -> [{string.Join(", ", newColumn)}]", changedResult, currentModel);
+
+                LpModel newModel = CloneModel(currentModel);
+                for (int c = 0; c < newModel.Constraints.Count; c++)
+                {
+                    newModel.Constraints[c].Coefficients[j] = newColumn[c];
+                }
+
+                ApplyModelChange($"Applied column change: {label} -> [{string.Join(", ", newColumn)}]", newModel, changedResult);
             }
             catch (Exception ex)
             {
@@ -476,14 +555,19 @@ namespace LPR381
             }
 
             string columnInput = ShowInputDialog(
-                $"Enter the new activity's technological coefficients, one per constraint (c1..c{currentModel.Constraints.Count}), comma-separated:",
+                "Add a new decision variable (activity) to the model and see how it changes the optimal solution — " +
+                "for example, a new product that consumes some of each constraint's resource.\n\n" +
+                $"Enter its technological coefficients, one per constraint (c1..c{currentModel.Constraints.Count}), comma-separated.\n" +
+                "Example: 2,1  (uses 2 units of c1's resource and 1 unit of c2's resource per unit made)",
                 "Add New Activity");
             if (string.IsNullOrWhiteSpace(columnInput))
             {
                 return;
             }
 
-            string objInput = ShowInputDialog("Enter the new activity's objective coefficient:", "Add New Activity");
+            string objInput = ShowInputDialog(
+                "Now enter the new activity's objective coefficient (its profit or cost per unit).\nExample: 5",
+                "Add New Activity");
             if (string.IsNullOrWhiteSpace(objInput))
             {
                 return;
@@ -505,20 +589,28 @@ namespace LPR381
             {
                 SolverResult changedResult = analyzer.AddNewActivity(newColumn, objCoeff);
 
-                // The result now has one more variable than currentModel does — build a
-                // display-only model wrapper so Display.PopulateFullHistory's summary row
-                // (which loops model.DecisionVariableCount) shows the new activity too.
-                var displayModel = new LpModel
-                {
-                    IsMaximization = currentModel.IsMaximization,
-                    ObjectiveCoefficients = new double[currentModel.DecisionVariableCount + 1],
-                    SignRestrictions = currentModel.SignRestrictions,
-                    Constraints = currentModel.Constraints
-                };
+                int newActivityLabel = currentModel.DecisionVariableCount + 1;
 
-                DisplayAndLogChange(
-                    $"Added new activity x{currentModel.DecisionVariableCount + 1} (obj coeff {objCoeff}, column [{string.Join(", ", newColumn)}])",
-                    changedResult, displayModel);
+                LpModel newModel = CloneModel(currentModel);
+
+                var newObjective = newModel.ObjectiveCoefficients.ToList();
+                newObjective.Add(objCoeff);
+                newModel.ObjectiveCoefficients = newObjective.ToArray();
+
+                for (int c = 0; c < newModel.Constraints.Count; c++)
+                {
+                    var coeffs = newModel.Constraints[c].Coefficients.ToList();
+                    coeffs.Add(newColumn[c]);
+                    newModel.Constraints[c].Coefficients = coeffs.ToArray();
+                }
+
+                var newSigns = newModel.SignRestrictions.ToList();
+                newSigns.Add("+"); // matches AnalyzeSensitivity.AddNewActivity's own default
+                newModel.SignRestrictions = newSigns.ToArray();
+
+                ApplyModelChange(
+                    $"Added new activity x{newActivityLabel} (obj coeff {objCoeff}, column [{string.Join(", ", newColumn)}])",
+                    newModel, changedResult);
             }
             catch (Exception ex)
             {
@@ -534,7 +626,10 @@ namespace LPR381
             }
 
             string input = ShowInputDialog(
-                $"Enter the new constraint as: coefficients (comma-separated, one per x1..x{currentModel.DecisionVariableCount}), then relation (<=, >=, or =), then RHS.\nExample: 1,2,1 <= 10",
+                "Add a new constraint to the model and see how it changes the optimal solution — " +
+                "for example, a resource limit that wasn't in the original problem.\n\n" +
+                $"Enter the coefficients (comma-separated, one per x1..x{currentModel.DecisionVariableCount}), then a relation (<=, >=, or =), then the RHS.\n" +
+                "Example: 1,2,1 <= 10  (means x1 + 2x2 + x3 <= 10)",
                 "Add New Constraint");
             if (string.IsNullOrWhiteSpace(input))
             {
@@ -546,9 +641,17 @@ namespace LPR381
                 Constraints newConstraint = ParseConstraintInput(input, currentModel.DecisionVariableCount);
                 SolverResult changedResult = analyzer.AddNewConstraint(newConstraint);
 
-                DisplayAndLogChange(
+                LpModel newModel = CloneModel(currentModel);
+                newModel.Constraints.Add(new Constraints
+                {
+                    Coefficients = (double[])newConstraint.Coefficients.Clone(),
+                    Relation = newConstraint.Relation,
+                    RHS = newConstraint.RHS
+                });
+
+                ApplyModelChange(
                     $"Added new constraint: [{string.Join(", ", newConstraint.Coefficients)}] {newConstraint.Relation} {newConstraint.RHS}",
-                    changedResult, currentModel);
+                    newModel, changedResult);
             }
             catch (Exception ex)
             {
@@ -726,38 +829,83 @@ namespace LPR381
             return true;
         }
 
-        // Shows the new solution after an "Apply" operation and appends it to the output file.
-        // displayModel supplies DecisionVariableCount for the grid's summary row — pass a
-        // wrapper with a bumped count for AddNewActivity, currentModel everywhere else.
-        private void DisplayAndLogChange(string description, SolverResult changedResult, LpModel displayModel)
+        // Applies a change as the new working baseline: currentModel/currentResult/analyzer
+        // all advance to it, so later operations (further applies, ranges, shadow prices,
+        // add activity/constraint...) build on top of every earlier change, not just the
+        // very first solve. Rejected (rolled back) if the change makes the model infeasible
+        // or unbounded, so the working model never gets left in a broken state.
+        private void ApplyModelChange(string description, LpModel newModel, SolverResult changedResult)
         {
             if (changedResult.IsInfeasible)
             {
-                MessageBox.Show(description + "\n\nThe modified model is infeasible.", "Infeasible",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-            else if (changedResult.IsUnbounded)
-            {
-                MessageBox.Show(description + "\n\nThe modified model is unbounded.", "Unbounded",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-            else if (changedResult.IsOptimal)
-            {
-                var sb = new StringBuilder();
-                sb.AppendLine(description);
-                sb.AppendLine();
-                sb.AppendLine("New Objective: " + FormatBound(changedResult.ObjectiveValue));
-                for (int j = 0; j < changedResult.VariableValues.Length; j++)
-                {
-                    sb.AppendLine($"x{j + 1} = {FormatBound(changedResult.VariableValues[j])}");
-                }
-                MessageBox.Show(sb.ToString(), "Change Applied", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(description + "\n\nThe modified model is infeasible — the change was NOT applied. The working model is unchanged; try a different value.",
+                    "Infeasible", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                EnsureSensitivityFile();
+                WriteOutputFile.AppendResultToFile(changedResult, sensitivityFilePath, description + " (rejected — infeasible)");
+                return;
             }
 
-            Display.PopulateFullHistory(changedResult, displayModel, dgwSenDisplay);
+            if (changedResult.IsUnbounded)
+            {
+                MessageBox.Show(description + "\n\nThe modified model is unbounded — the change was NOT applied. The working model is unchanged; try a different value.",
+                    "Unbounded", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                EnsureSensitivityFile();
+                WriteOutputFile.AppendResultToFile(changedResult, sensitivityFilePath, description + " (rejected — unbounded)");
+                return;
+            }
+
+            currentModel = newModel;
+            currentResult = changedResult;
+            analyzer.OriginalModel = currentModel;
+            analyzer.SolvedResult = currentResult;
+
+            // Indices from before this change may no longer point at the same thing
+            // (e.g. a new activity shifts nothing, but it's safest to make the user re-click).
+            selectedVariableIndex = null;
+            selectedConstraintIndex = null;
+            lastSelectionKind = SelectionKind.None;
+            UpdateSelectionLabel();
+
+            var sb = new StringBuilder();
+            sb.AppendLine(description);
+            sb.AppendLine();
+            sb.AppendLine("New Objective: " + FormatBound(changedResult.ObjectiveValue));
+            for (int j = 0; j < changedResult.VariableValues.Length; j++)
+            {
+                sb.AppendLine($"x{j + 1} = {FormatBound(changedResult.VariableValues[j])}");
+            }
+            MessageBox.Show(sb.ToString(), "Change Applied", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            Display.PopulateFullHistory(changedResult, currentModel, dgwSenDisplay);
 
             EnsureSensitivityFile();
             WriteOutputFile.AppendResultToFile(changedResult, sensitivityFilePath, description);
+        }
+
+        // Mirrors AnalyzeSensitivity's own private CloneModel — used here to build the
+        // next working model in parallel with the SolverResult the analyzer computes,
+        // since the analyzer only returns the result, not the model it solved.
+        private static LpModel CloneModel(LpModel original)
+        {
+            var copy = new LpModel
+            {
+                IsMaximization = original.IsMaximization,
+                ObjectiveCoefficients = (double[])original.ObjectiveCoefficients.Clone(),
+                SignRestrictions = (string[])original.SignRestrictions.Clone(),
+                TempColNames = original.TempColNames != null ? (string[])original.TempColNames.Clone() : null
+            };
+
+            foreach (var constraint in original.Constraints)
+            {
+                copy.Constraints.Add(new Constraints
+                {
+                    Coefficients = (double[])constraint.Coefficients.Clone(),
+                    Relation = constraint.Relation,
+                    RHS = constraint.RHS
+                });
+            }
+
+            return copy;
         }
 
         private void EnsureSensitivityFile()
@@ -809,18 +957,18 @@ namespace LPR381
         {
             using (Form prompt = new Form())
             {
-                prompt.Width = 420;
-                prompt.Height = 160;
+                prompt.Width = 480;
+                prompt.Height = 350;
                 prompt.FormBorderStyle = FormBorderStyle.FixedDialog;
                 prompt.Text = caption;
                 prompt.StartPosition = FormStartPosition.CenterParent;
                 prompt.MaximizeBox = false;
                 prompt.MinimizeBox = false;
 
-                Label textLabel = new Label() { Left = 10, Top = 10, Width = 385, Height = 60, Text = text };
-                TextBox textBox = new TextBox() { Left = 10, Top = 75, Width = 385 };
-                Button confirmation = new Button() { Text = "OK", Left = 230, Width = 80, Top = 105, DialogResult = DialogResult.OK };
-                Button cancel = new Button() { Text = "Cancel", Left = 315, Width = 80, Top = 105, DialogResult = DialogResult.Cancel };
+                Label textLabel = new Label() { Left = 10, Top = 10, Width = 445, Height = 180, Text = text };
+                TextBox textBox = new TextBox() { Left = 10, Top = 200, Width = 445 };
+                Button confirmation = new Button() { Text = "OK", Left = 280, Width = 85, Height = 32, Top = 240, DialogResult = DialogResult.OK };
+                Button cancel = new Button() { Text = "Cancel", Left = 375, Width = 85, Height = 32, Top = 240, DialogResult = DialogResult.Cancel };
 
                 prompt.Controls.Add(textLabel);
                 prompt.Controls.Add(textBox);

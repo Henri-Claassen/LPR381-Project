@@ -34,12 +34,10 @@ namespace LPR381
             this.btnSenExit = new System.Windows.Forms.Button();
             this.dgwSenDisplay = new System.Windows.Forms.DataGridView();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.btnSenRangeVar = new System.Windows.Forms.Button();
+            this.btnSenFindRange = new System.Windows.Forms.Button();
             this.btnSenShadowPrice = new System.Windows.Forms.Button();
             this.btnSenApplyVar = new System.Windows.Forms.Button();
-            this.btnSenRangeRHS = new System.Windows.Forms.Button();
             this.btnSenApplyRHS = new System.Windows.Forms.Button();
-            this.btnSenRangeCol = new System.Windows.Forms.Button();
             this.btnSenApplyCol = new System.Windows.Forms.Button();
             this.btnSenAddActivity = new System.Windows.Forms.Button();
             this.btnSenAddConstraint = new System.Windows.Forms.Button();
@@ -113,16 +111,16 @@ namespace LPR381
             //
             this.openFileDialog1.FileName = "openFileDialog1";
             //
-            // btnSenRangeVar
+            // btnSenFindRange
             //
-            this.btnSenRangeVar.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenRangeVar.Location = new System.Drawing.Point(-1, 32);
-            this.btnSenRangeVar.Name = "btnSenRangeVar";
-            this.btnSenRangeVar.Size = new System.Drawing.Size(140, 33);
-            this.btnSenRangeVar.TabIndex = 5;
-            this.btnSenRangeVar.Text = "Range Variable";
-            this.btnSenRangeVar.UseVisualStyleBackColor = true;
-            this.btnSenRangeVar.Click += new System.EventHandler(this.btnSenRangeVar_Click);
+            this.btnSenFindRange.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSenFindRange.Location = new System.Drawing.Point(-1, 32);
+            this.btnSenFindRange.Name = "btnSenFindRange";
+            this.btnSenFindRange.Size = new System.Drawing.Size(140, 33);
+            this.btnSenFindRange.TabIndex = 5;
+            this.btnSenFindRange.Text = "Find Range";
+            this.btnSenFindRange.UseVisualStyleBackColor = true;
+            this.btnSenFindRange.Click += new System.EventHandler(this.btnSenFindRange_Click);
             //
             // btnSenShadowPrice
             //
@@ -146,46 +144,24 @@ namespace LPR381
             this.btnSenApplyVar.UseVisualStyleBackColor = true;
             this.btnSenApplyVar.Click += new System.EventHandler(this.btnSenApplyVar_Click);
             //
-            // btnSenRangeRHS
-            //
-            this.btnSenRangeRHS.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenRangeRHS.Location = new System.Drawing.Point(311, 32);
-            this.btnSenRangeRHS.Name = "btnSenRangeRHS";
-            this.btnSenRangeRHS.Size = new System.Drawing.Size(120, 33);
-            this.btnSenRangeRHS.TabIndex = 8;
-            this.btnSenRangeRHS.Text = "Range RHS";
-            this.btnSenRangeRHS.UseVisualStyleBackColor = true;
-            this.btnSenRangeRHS.Click += new System.EventHandler(this.btnSenRangeRHS_Click);
-            //
             // btnSenApplyRHS
             //
             this.btnSenApplyRHS.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenApplyRHS.Location = new System.Drawing.Point(427, 32);
+            this.btnSenApplyRHS.Location = new System.Drawing.Point(311, 32);
             this.btnSenApplyRHS.Name = "btnSenApplyRHS";
             this.btnSenApplyRHS.Size = new System.Drawing.Size(160, 33);
-            this.btnSenApplyRHS.TabIndex = 9;
+            this.btnSenApplyRHS.TabIndex = 8;
             this.btnSenApplyRHS.Text = "Apply RHS Change";
             this.btnSenApplyRHS.UseVisualStyleBackColor = true;
             this.btnSenApplyRHS.Click += new System.EventHandler(this.btnSenApplyRHS_Click);
             //
-            // btnSenRangeCol
-            //
-            this.btnSenRangeCol.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenRangeCol.Location = new System.Drawing.Point(583, 32);
-            this.btnSenRangeCol.Name = "btnSenRangeCol";
-            this.btnSenRangeCol.Size = new System.Drawing.Size(140, 33);
-            this.btnSenRangeCol.TabIndex = 10;
-            this.btnSenRangeCol.Text = "Range Column";
-            this.btnSenRangeCol.UseVisualStyleBackColor = true;
-            this.btnSenRangeCol.Click += new System.EventHandler(this.btnSenRangeCol_Click);
-            //
             // btnSenApplyCol
             //
             this.btnSenApplyCol.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenApplyCol.Location = new System.Drawing.Point(719, 32);
+            this.btnSenApplyCol.Location = new System.Drawing.Point(467, 32);
             this.btnSenApplyCol.Name = "btnSenApplyCol";
             this.btnSenApplyCol.Size = new System.Drawing.Size(180, 33);
-            this.btnSenApplyCol.TabIndex = 11;
+            this.btnSenApplyCol.TabIndex = 9;
             this.btnSenApplyCol.Text = "Apply Column Change";
             this.btnSenApplyCol.UseVisualStyleBackColor = true;
             this.btnSenApplyCol.Click += new System.EventHandler(this.btnSenApplyCol_Click);
@@ -193,10 +169,10 @@ namespace LPR381
             // btnSenAddActivity
             //
             this.btnSenAddActivity.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenAddActivity.Location = new System.Drawing.Point(895, 32);
+            this.btnSenAddActivity.Location = new System.Drawing.Point(643, 32);
             this.btnSenAddActivity.Name = "btnSenAddActivity";
             this.btnSenAddActivity.Size = new System.Drawing.Size(130, 33);
-            this.btnSenAddActivity.TabIndex = 12;
+            this.btnSenAddActivity.TabIndex = 10;
             this.btnSenAddActivity.Text = "Add Activity";
             this.btnSenAddActivity.UseVisualStyleBackColor = true;
             this.btnSenAddActivity.Click += new System.EventHandler(this.btnSenAddActivity_Click);
@@ -204,10 +180,10 @@ namespace LPR381
             // btnSenAddConstraint
             //
             this.btnSenAddConstraint.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenAddConstraint.Location = new System.Drawing.Point(1021, 32);
+            this.btnSenAddConstraint.Location = new System.Drawing.Point(769, 32);
             this.btnSenAddConstraint.Name = "btnSenAddConstraint";
             this.btnSenAddConstraint.Size = new System.Drawing.Size(150, 33);
-            this.btnSenAddConstraint.TabIndex = 13;
+            this.btnSenAddConstraint.TabIndex = 11;
             this.btnSenAddConstraint.Text = "Add Constraint";
             this.btnSenAddConstraint.UseVisualStyleBackColor = true;
             this.btnSenAddConstraint.Click += new System.EventHandler(this.btnSenAddConstraint_Click);
@@ -271,12 +247,10 @@ namespace LPR381
             this.Controls.Add(this.btnSenAddConstraint);
             this.Controls.Add(this.btnSenAddActivity);
             this.Controls.Add(this.btnSenApplyCol);
-            this.Controls.Add(this.btnSenRangeCol);
             this.Controls.Add(this.btnSenApplyRHS);
-            this.Controls.Add(this.btnSenRangeRHS);
             this.Controls.Add(this.btnSenApplyVar);
             this.Controls.Add(this.btnSenShadowPrice);
-            this.Controls.Add(this.btnSenRangeVar);
+            this.Controls.Add(this.btnSenFindRange);
             this.Controls.Add(this.dgwSenDisplay);
             this.Controls.Add(this.btnSenExit);
             this.Controls.Add(this.btnSenMM);
@@ -297,12 +271,10 @@ namespace LPR381
         private System.Windows.Forms.Button btnSenExit;
         private System.Windows.Forms.DataGridView dgwSenDisplay;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.Button btnSenRangeVar;
+        private System.Windows.Forms.Button btnSenFindRange;
         private System.Windows.Forms.Button btnSenShadowPrice;
         private System.Windows.Forms.Button btnSenApplyVar;
-        private System.Windows.Forms.Button btnSenRangeRHS;
         private System.Windows.Forms.Button btnSenApplyRHS;
-        private System.Windows.Forms.Button btnSenRangeCol;
         private System.Windows.Forms.Button btnSenApplyCol;
         private System.Windows.Forms.Button btnSenAddActivity;
         private System.Windows.Forms.Button btnSenAddConstraint;
