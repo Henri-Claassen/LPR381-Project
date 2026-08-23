@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System">
-      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.dll</HintPath>
+      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.7.2\System.dll</HintPath>
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -92,7 +92,7 @@
     <Compile Include="Stored Info\Constraints.cs" />
     <Compile Include="Stored Info\LpModel.cs" />
     <Compile Include="Stored Info\NlpModel.cs" />
-	<Compile Include="Stored Info\Knapsack.cs" />
+    <Compile Include="Stored Info\Knapsack.cs" />
     <Compile Include="UserDisplay\Display.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
