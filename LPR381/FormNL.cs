@@ -1,4 +1,4 @@
-﻿using LPR381.Input_File_Handler;
+using LPR381.Input_File_Handler;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -73,7 +73,43 @@ namespace LPR381
 
         private void btnNLSolve_Click(object sender, EventArgs e)
         {
-            //Code for solving the nonlinear programming problem will go here
+            if (Display.lines == null || Display.lines.Length == 0)
+            {
+                MessageBox.Show("Please load a file first.");
+                return;
+            }
+
+            try
+            {
+                var nlpModel = HandleInput.ParseNlpModel(Display.lines);
+                var parser = new LPR381.Solving.ExpressionParser();
+                
+                Func<double[], double> f = (x) => parser.Evaluate(nlpModel.ObjectiveFunction, x);
+                Func<double[], double[]> grad = (x) => LPR381.Solving.NonLinearSolver.CalculateGradient(f, x);
+                
+                double[] optimal = LPR381.Solving.NonLinearSolver.SteepestAscentDescent(f, grad, nlpModel.InitialPoint, 1e-4, nlpModel.IsMaximization);
+                double optimalVal = f(optimal);
+                
+                double[,] hessian = LPR381.Solving.NonLinearSolver.CalculateHessian(f, optimal);
+                LPR381.Solving.Convexity conv = LPR381.Solving.NonLinearSolver.DetermineConvexity(hessian);
+                
+                dgvNLDisplay.Rows.Clear();
+                dgvNLDisplay.Columns.Clear();
+                dgvNLDisplay.Columns.Add("Metric", "Metric");
+                dgvNLDisplay.Columns.Add("Value", "Value");
+                
+                dgvNLDisplay.Rows.Add("Objective Value", Math.Round(optimalVal, 4).ToString());
+                for (int i = 0; i < optimal.Length; i++)
+                {
+                    dgvNLDisplay.Rows.Add($"x{i+1}", Math.Round(optimal[i], 4).ToString());
+                }
+                
+                dgvNLDisplay.Rows.Add("Hessian Convexity", conv.ToString());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Error solving NLP: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnNLShadowPrice_Click(object sender, EventArgs e)

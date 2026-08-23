@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -17,6 +17,34 @@ namespace LPR381.Input_File_Handler
         public static string[] ReadModelFile(string filePath)
         {
             return File.ReadAllLines(filePath);
+        }
+        #endregion
+
+        #region ParseNlpModel
+        public static NlpModel ParseNlpModel(string[] lines)
+        {
+            var model = new NlpModel();
+            
+            string opt = lines[0].Trim().ToUpper();
+            model.IsMaximization = opt == "MAX";
+            
+            model.ObjectiveFunction = lines[1].Trim();
+            
+            if (lines.Length > 2)
+            {
+                string[] parts = lines[2].Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+                model.InitialPoint = new double[parts.Length];
+                for (int i = 0; i < parts.Length; i++)
+                {
+                    model.InitialPoint[i] = Convert.ToDouble(parts[i]);
+                }
+            }
+            else
+            {
+                model.InitialPoint = new double[] { 1, 1 }; // default fallback
+            }
+            
+            return model;
         }
         #endregion
 

@@ -84,11 +84,15 @@
     <Compile Include="Sensitivity Analysis\AnalyzeSensitivity.cs" />
     <Compile Include="Solving\BranchNode.cs" />
     <Compile Include="Solving\CuttingPlaneTest.cs" />
+    <Compile Include="Solving\ExpressionParser.cs" />
+    <Compile Include="Solving\NonLinearSolver.cs" />
     <Compile Include="Solving\Solver.cs" />
     <Compile Include="Solving\SolverResult.cs" />
     <Compile Include="Solving\Tableau.cs" />
     <Compile Include="Stored Info\Constraints.cs" />
     <Compile Include="Stored Info\LpModel.cs" />
+    <Compile Include="Stored Info\NlpModel.cs" />
+	<Compile Include="Stored Info\Knapsack.cs" />
     <Compile Include="UserDisplay\Display.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>

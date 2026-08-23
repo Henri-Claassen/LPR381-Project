@@ -32,6 +32,7 @@
             this.btnForm1 = new System.Windows.Forms.Button();
             this.btnSen = new System.Windows.Forms.Button();
             this.btnNonLin = new System.Windows.Forms.Button();
+            this.btnExit = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnForm1
@@ -67,6 +68,21 @@
             this.btnNonLin.UseVisualStyleBackColor = true;
             this.btnNonLin.Click += new System.EventHandler(this.button3_Click);
             // 
+            // btnExit
+            // 
+            this.btnExit.BackColor = System.Drawing.Color.Red;
+            this.btnExit.FlatAppearance.BorderSize = 0;
+            this.btnExit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnExit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnExit.ForeColor = System.Drawing.Color.White;
+            this.btnExit.Location = new System.Drawing.Point(1254, -1);
+            this.btnExit.Name = "btnExit";
+            this.btnExit.Size = new System.Drawing.Size(60, 37);
+            this.btnExit.TabIndex = 10;
+            this.btnExit.Text = "Exit";
+            this.btnExit.UseVisualStyleBackColor = false;
+            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
+            // 
             // FormMain_Menu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -74,6 +90,7 @@
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1312, 689);
+            this.Controls.Add(this.btnExit);
             this.Controls.Add(this.btnNonLin);
             this.Controls.Add(this.btnSen);
             this.Controls.Add(this.btnForm1);
@@ -90,5 +107,6 @@
         private System.Windows.Forms.Button btnForm1;
         private System.Windows.Forms.Button btnSen;
         private System.Windows.Forms.Button btnNonLin;
+        private System.Windows.Forms.Button btnExit;
     }
 }

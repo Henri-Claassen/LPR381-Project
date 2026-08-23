@@ -122,7 +122,138 @@ namespace LPR381
             LpModel model = HandleInput.ParseModel(Display.lines);
             Solver solver = new Solver();
             Tableau table = solver.BuildCanonicalForm(model);
+
+            canonicalTableau = table;
+            canonicalModel = model;
+
             Display.populateMainDisplay(table, dgwMainDisplay);
+        }
+
+        private void btnBranchAndBound_Click(object sender, EventArgs e)
+        {
+            if (Display.lines == null)
+            {
+                MessageBox.Show("Load a file first.");
+                return;
+            }
+            try
+            {
+                LpModel model = HandleInput.ParseModel(Display.lines);
+                Solver solver = new Solver();
+                SolverResult result = solver.SolveBranchAndBound(model);
+
+                if (result.IsInfeasible)
+                {
+                    MessageBox.Show("This problem's LP relaxation is infeasible.", "Infeasible",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else if (result.IsUnbounded)
+                {
+                    MessageBox.Show("This problem's LP relaxation is unbounded.", "Unbounded",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+                else if (!result.IsOptimal)
+                {
+                    MessageBox.Show("No integer-feasible solution was found.", "No Solution",
+                        MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+
+                Display.PopulateFullHistory(result, model, dgwMainDisplay);
+                WriteOutputFile.WriteResultToFile(result, Display.GetOutputFilePath());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while solving the problem: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            
+        }
+
+        private void btnKnapsack_Click(object sender, EventArgs e)
+        {
+            if (Display.lines == null)
+            {
+                MessageBox.Show("Load a file first.");
+                return;
+            }
+            try
+            {
+                LpModel model = HandleInput.ParseModel(Display.lines);
+                Solver solver = new Solver();
+
+                if (!solver.IsKnapsackModel(model))
+                {
+                    MessageBox.Show(
+                        "This model isn't a valid 0/1 knapsack problem. It must be a maximization with exactly one <= constraint and all binary variables.",
+                        "Invalid Model", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                SolverResult result = solver.SolveKnapsackBranchAndBound(model);
+
+                Display.PopulateFullHistory(result, model, dgwMainDisplay);
+                WriteOutputFile.WriteResultToFile(result, Display.GetOutputFilePath());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while solving the knapsack problem: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            
+        }
+
+        private Tableau canonicalTableau;
+        private LpModel canonicalModel;
+
+        private void btnNewPivot_Click(object sender, EventArgs e)
+        {
+            if (canonicalTableau == null)
+            {
+                MessageBox.Show("Generate the Canonical Form first.");
+                return;
+            }
+
+            try
+            {
+                Tableau editedTable = ReadTableauFromGrid(canonicalTableau, dgwMainDisplay);
+
+                Solver solver = new Solver();
+                SolverResult result = solver.SolveFromEditedTableau(editedTable, canonicalModel.DecisionVariableCount);
+
+                Display.PopulateFullHistory(result, canonicalModel, dgwMainDisplay);
+                WriteOutputFile.WriteResultToFile(result, Display.GetOutputFilePath());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private Tableau ReadTableauFromGrid(Tableau template, DataGridView grid)
+        {
+            var table = new Tableau
+            {
+                TableNumber = "t-i",
+                IsMaximization = template.IsMaximization,
+                ColumnNames = new List<string>(template.ColumnNames),
+                RowNames = new List<string>(template.RowNames),
+                BasicVariables = new List<string>(template.BasicVariables)
+            };
+
+            for (int i = 0; i < template.Rows.Count; i++)
+            {
+                var row = new List<double>();
+                for (int j = 0; j < template.Rows[i].Count; j++)
+                {
+                    string cellValue = grid.Rows[i].Cells[j + 1].Value?.ToString();
+                    if (!double.TryParse(cellValue, out double parsed))
+                        throw new InvalidOperationException($"Invalid number in row {i + 1}, column {j + 1}.");
+                    row.Add(parsed);
+                }
+                table.Rows.Add(row);
+            }
+
+            return table;
         }
     }
 }

@@ -31,11 +31,6 @@ namespace LPR381
             this.Hide();
         }
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-            //this.Close();
-        }
-
         private void btnForm1_Click(object sender, EventArgs e)
         {
             Form1 f1 = new Form1();
@@ -48,6 +43,11 @@ namespace LPR381
             FormSen formSen = new FormSen();
             formSen.Show();
             this.Hide();
+        }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            Environment.Exit(0);
         }
     }
 }
