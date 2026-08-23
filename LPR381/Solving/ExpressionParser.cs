@@ -10,6 +10,11 @@ namespace LPR381.Solving
 
         public double Evaluate(string expression, double[] variables)
         {
+            if (string.IsNullOrWhiteSpace(expression))
+            {
+                throw new ArgumentException("The objective function expression is empty.");
+            }
+
             _expression = expression.Replace(" ", "").ToLower();
             _pos = 0;
             _variables = variables;

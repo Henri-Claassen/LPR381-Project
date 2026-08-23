@@ -59,9 +59,16 @@ namespace LPR381
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                string filePath = openFileDialog1.FileName;
-                Display.lines = HandleInput.ReadModelFile(filePath);
-                Display.showUserInput(Display.lines, dgwMainDisplay);
+                try
+                {
+                    string filePath = openFileDialog1.FileName;
+                    Display.lines = HandleInput.ReadModelFile(filePath);
+                    Display.showUserInput(Display.lines, dgwMainDisplay);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Could not read the file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
@@ -72,22 +79,30 @@ namespace LPR381
                 MessageBox.Show("Load a file first.");
                 return;
             }
-            LpModel model = HandleInput.ParseModel(Display.lines);
-            Solver solver = new Solver();
-            SolverResult result = solver.SolvePrimalSimplex(model);
 
-            if (result.SwitchedToDualSimplex)
+            try
             {
-                MessageBox.Show(
-                    "This problem couldn't start with standard Primal Simplex due to negative RHS values, so Dual Simplex was used automatically to find a feasible starting point.",
-                    "Switched to Dual Simplex",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information
-                );
-            }
+                LpModel model = HandleInput.ParseModel(Display.lines);
+                Solver solver = new Solver();
+                SolverResult result = solver.SolvePrimalSimplex(model);
 
-            Display.PopulateFullHistory(result, model, dgwMainDisplay);
-            WriteOutputFile.WriteResultToFile(result, Display.GetOutputFilePath());
+                if (result.SwitchedToDualSimplex)
+                {
+                    MessageBox.Show(
+                        "This problem couldn't start with standard Primal Simplex due to negative RHS values, so Dual Simplex was used automatically to find a feasible starting point.",
+                        "Switched to Dual Simplex",
+                        MessageBoxButtons.OK,
+                        MessageBoxIcon.Information
+                    );
+                }
+
+                Display.PopulateFullHistory(result, model, dgwMainDisplay);
+                WriteOutputFile.WriteResultToFile(result, Display.GetOutputFilePath());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while solving the problem: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnCuttingPlane_Click(object sender, EventArgs e)
@@ -97,12 +112,20 @@ namespace LPR381
                 MessageBox.Show("Load a file first.");
                 return;
             }
-            LpModel model = HandleInput.ParseModel(Display.lines);
-            Solver solver = new Solver();
-            SolverResult result = solver.SolveCuttingPlane(model);
 
-            Display.PopulateFullHistory(result, model, dgwMainDisplay);
-            WriteOutputFile.WriteResultToFile(result, Display.GetOutputFilePath());
+            try
+            {
+                LpModel model = HandleInput.ParseModel(Display.lines);
+                Solver solver = new Solver();
+                SolverResult result = solver.SolveCuttingPlane(model);
+
+                Display.PopulateFullHistory(result, model, dgwMainDisplay);
+                WriteOutputFile.WriteResultToFile(result, Display.GetOutputFilePath());
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while solving the problem: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnExit1_Click(object sender, EventArgs e)
@@ -119,14 +142,27 @@ namespace LPR381
 
         private void btnF1CanonicalForm_Click(object sender, EventArgs e)
         {
-            LpModel model = HandleInput.ParseModel(Display.lines);
-            Solver solver = new Solver();
-            Tableau table = solver.BuildCanonicalForm(model);
+            if (Display.lines == null)
+            {
+                MessageBox.Show("Load a file first.");
+                return;
+            }
 
-            canonicalTableau = table;
-            canonicalModel = model;
+            try
+            {
+                LpModel model = HandleInput.ParseModel(Display.lines);
+                Solver solver = new Solver();
+                Tableau table = solver.BuildCanonicalForm(model);
 
-            Display.populateMainDisplay(table, dgwMainDisplay);
+                canonicalTableau = table;
+                canonicalModel = model;
+
+                Display.populateMainDisplay(table, dgwMainDisplay);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while building the canonical form: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnBranchAndBound_Click(object sender, EventArgs e)

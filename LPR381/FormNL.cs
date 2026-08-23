@@ -59,10 +59,17 @@ namespace LPR381
         private void btnChooseFile_Click(object sender, EventArgs e)
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {   
-                string filePath = openFileDialog1.FileName;
-                Display.lines = HandleInput.ReadModelFile(filePath);
-                Display.showUserInput(Display.lines, dgvNLDisplay);
+            {
+                try
+                {
+                    string filePath = openFileDialog1.FileName;
+                    Display.lines = HandleInput.ReadModelFile(filePath);
+                    Display.showUserInput(Display.lines, dgvNLDisplay);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Could not read the file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 

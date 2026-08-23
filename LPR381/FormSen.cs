@@ -274,19 +274,26 @@ namespace LPR381
         {
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                string filePath = openFileDialog1.FileName;
-                Display.lines = HandleInput.ReadModelFile(filePath);
-                Display.showUserInput(Display.lines, dgwSenDisplay);
+                try
+                {
+                    string filePath = openFileDialog1.FileName;
+                    Display.lines = HandleInput.ReadModelFile(filePath);
+                    Display.showUserInput(Display.lines, dgwSenDisplay);
 
-                // A newly loaded file invalidates any previously solved model/log
-                currentModel = null;
-                currentResult = null;
-                analyzer = null;
-                selectedVariableIndex = null;
-                selectedConstraintIndex = null;
-                lastSelectionKind = SelectionKind.None;
-                sensitivityFilePath = null;
-                UpdateSelectionLabel();
+                    // A newly loaded file invalidates any previously solved model/log
+                    currentModel = null;
+                    currentResult = null;
+                    analyzer = null;
+                    selectedVariableIndex = null;
+                    selectedConstraintIndex = null;
+                    lastSelectionKind = SelectionKind.None;
+                    sensitivityFilePath = null;
+                    UpdateSelectionLabel();
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Could not read the file: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
         }
 
