@@ -37,10 +37,10 @@
             // 
             // btnForm1
             // 
-            this.btnForm1.Location = new System.Drawing.Point(123, 224);
-            this.btnForm1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnForm1.Location = new System.Drawing.Point(92, 182);
+            this.btnForm1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnForm1.Name = "btnForm1";
-            this.btnForm1.Size = new System.Drawing.Size(164, 41);
+            this.btnForm1.Size = new System.Drawing.Size(123, 33);
             this.btnForm1.TabIndex = 7;
             this.btnForm1.Text = "Solver";
             this.btnForm1.UseVisualStyleBackColor = true;
@@ -48,10 +48,10 @@
             // 
             // btnSen
             // 
-            this.btnSen.Location = new System.Drawing.Point(565, 224);
-            this.btnSen.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnSen.Location = new System.Drawing.Point(424, 182);
+            this.btnSen.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSen.Name = "btnSen";
-            this.btnSen.Size = new System.Drawing.Size(164, 41);
+            this.btnSen.Size = new System.Drawing.Size(123, 33);
             this.btnSen.TabIndex = 8;
             this.btnSen.Text = "Sensitivity Analysis";
             this.btnSen.UseVisualStyleBackColor = true;
@@ -59,10 +59,10 @@
             // 
             // btnNonLin
             // 
-            this.btnNonLin.Location = new System.Drawing.Point(1009, 224);
-            this.btnNonLin.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnNonLin.Location = new System.Drawing.Point(757, 182);
+            this.btnNonLin.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnNonLin.Name = "btnNonLin";
-            this.btnNonLin.Size = new System.Drawing.Size(164, 41);
+            this.btnNonLin.Size = new System.Drawing.Size(123, 33);
             this.btnNonLin.TabIndex = 9;
             this.btnNonLin.Text = "Non-Linear Analysis";
             this.btnNonLin.UseVisualStyleBackColor = true;
@@ -75,9 +75,10 @@
             this.btnExit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnExit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnExit.ForeColor = System.Drawing.Color.White;
-            this.btnExit.Location = new System.Drawing.Point(1254, -1);
+            this.btnExit.Location = new System.Drawing.Point(940, -1);
+            this.btnExit.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnExit.Name = "btnExit";
-            this.btnExit.Size = new System.Drawing.Size(60, 37);
+            this.btnExit.Size = new System.Drawing.Size(45, 30);
             this.btnExit.TabIndex = 10;
             this.btnExit.Text = "Exit";
             this.btnExit.UseVisualStyleBackColor = false;
@@ -85,18 +86,19 @@
             // 
             // FormMain_Menu
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(1312, 689);
+            this.ClientSize = new System.Drawing.Size(984, 560);
             this.Controls.Add(this.btnExit);
             this.Controls.Add(this.btnNonLin);
             this.Controls.Add(this.btnSen);
             this.Controls.Add(this.btnForm1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "FormMain_Menu";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form2";
             this.Load += new System.EventHandler(this.Form2_Load);
             this.ResumeLayout(false);

@@ -45,20 +45,18 @@ namespace LPR381
             // dgwMainDisplay
             // 
             this.dgwMainDisplay.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgwMainDisplay.Location = new System.Drawing.Point(0, 48);
-            this.dgwMainDisplay.Margin = new System.Windows.Forms.Padding(4);
+            this.dgwMainDisplay.Location = new System.Drawing.Point(0, 39);
             this.dgwMainDisplay.Name = "dgwMainDisplay";
             this.dgwMainDisplay.RowHeadersWidth = 51;
-            this.dgwMainDisplay.Size = new System.Drawing.Size(1314, 600);
+            this.dgwMainDisplay.Size = new System.Drawing.Size(986, 488);
             this.dgwMainDisplay.TabIndex = 0;
             // 
             // btnChooseFile
             // 
             this.btnChooseFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnChooseFile.Location = new System.Drawing.Point(0, -1);
-            this.btnChooseFile.Margin = new System.Windows.Forms.Padding(4);
             this.btnChooseFile.Name = "btnChooseFile";
-            this.btnChooseFile.Size = new System.Drawing.Size(133, 32);
+            this.btnChooseFile.Size = new System.Drawing.Size(100, 26);
             this.btnChooseFile.TabIndex = 1;
             this.btnChooseFile.Text = "Choose File";
             this.btnChooseFile.UseVisualStyleBackColor = true;
@@ -71,10 +69,9 @@ namespace LPR381
             // btnSimplex
             // 
             this.btnSimplex.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSimplex.Location = new System.Drawing.Point(275, -1);
-            this.btnSimplex.Margin = new System.Windows.Forms.Padding(4);
+            this.btnSimplex.Location = new System.Drawing.Point(206, -1);
             this.btnSimplex.Name = "btnSimplex";
-            this.btnSimplex.Size = new System.Drawing.Size(132, 32);
+            this.btnSimplex.Size = new System.Drawing.Size(99, 26);
             this.btnSimplex.TabIndex = 2;
             this.btnSimplex.Text = "Simplex Solve";
             this.btnSimplex.UseVisualStyleBackColor = true;
@@ -83,10 +80,9 @@ namespace LPR381
             // btnBranchAndBound
             // 
             this.btnBranchAndBound.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnBranchAndBound.Location = new System.Drawing.Point(404, -1);
-            this.btnBranchAndBound.Margin = new System.Windows.Forms.Padding(4);
+            this.btnBranchAndBound.Location = new System.Drawing.Point(303, -1);
             this.btnBranchAndBound.Name = "btnBranchAndBound";
-            this.btnBranchAndBound.Size = new System.Drawing.Size(204, 32);
+            this.btnBranchAndBound.Size = new System.Drawing.Size(153, 26);
             this.btnBranchAndBound.TabIndex = 3;
             this.btnBranchAndBound.Text = "Branch And Bound Solve";
             this.btnBranchAndBound.UseVisualStyleBackColor = true;
@@ -95,10 +91,9 @@ namespace LPR381
             // btnKnapsack
             // 
             this.btnKnapsack.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnKnapsack.Location = new System.Drawing.Point(605, -1);
-            this.btnKnapsack.Margin = new System.Windows.Forms.Padding(4);
+            this.btnKnapsack.Location = new System.Drawing.Point(454, -1);
             this.btnKnapsack.Name = "btnKnapsack";
-            this.btnKnapsack.Size = new System.Drawing.Size(136, 32);
+            this.btnKnapsack.Size = new System.Drawing.Size(102, 26);
             this.btnKnapsack.TabIndex = 4;
             this.btnKnapsack.Text = "Knapsack Solve";
             this.btnKnapsack.UseVisualStyleBackColor = true;
@@ -107,9 +102,10 @@ namespace LPR381
             // btnMainF1
             // 
             this.btnMainF1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnMainF1.Location = new System.Drawing.Point(1138, -1);
+            this.btnMainF1.Location = new System.Drawing.Point(854, -1);
+            this.btnMainF1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnMainF1.Name = "btnMainF1";
-            this.btnMainF1.Size = new System.Drawing.Size(120, 32);
+            this.btnMainF1.Size = new System.Drawing.Size(90, 26);
             this.btnMainF1.TabIndex = 5;
             this.btnMainF1.Text = "Main Menu";
             this.btnMainF1.UseVisualStyleBackColor = true;
@@ -124,9 +120,10 @@ namespace LPR381
             this.btnExit1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnExit1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnExit1.ForeColor = System.Drawing.Color.White;
-            this.btnExit1.Location = new System.Drawing.Point(1254, -1);
+            this.btnExit1.Location = new System.Drawing.Point(940, -1);
+            this.btnExit1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnExit1.Name = "btnExit1";
-            this.btnExit1.Size = new System.Drawing.Size(60, 31);
+            this.btnExit1.Size = new System.Drawing.Size(45, 25);
             this.btnExit1.TabIndex = 6;
             this.btnExit1.Text = "Exit";
             this.btnExit1.UseVisualStyleBackColor = false;
@@ -135,9 +132,10 @@ namespace LPR381
             // btnF1CanonicalForm
             // 
             this.btnF1CanonicalForm.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnF1CanonicalForm.Location = new System.Drawing.Point(128, -1);
+            this.btnF1CanonicalForm.Location = new System.Drawing.Point(96, -1);
+            this.btnF1CanonicalForm.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnF1CanonicalForm.Name = "btnF1CanonicalForm";
-            this.btnF1CanonicalForm.Size = new System.Drawing.Size(153, 32);
+            this.btnF1CanonicalForm.Size = new System.Drawing.Size(115, 26);
             this.btnF1CanonicalForm.TabIndex = 8;
             this.btnF1CanonicalForm.Text = "Canonical Form";
             this.btnF1CanonicalForm.UseVisualStyleBackColor = true;
@@ -146,9 +144,10 @@ namespace LPR381
             // btnCuttingPlane
             // 
             this.btnCuttingPlane.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnCuttingPlane.Location = new System.Drawing.Point(739, -1);
+            this.btnCuttingPlane.Location = new System.Drawing.Point(554, -1);
+            this.btnCuttingPlane.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnCuttingPlane.Name = "btnCuttingPlane";
-            this.btnCuttingPlane.Size = new System.Drawing.Size(172, 32);
+            this.btnCuttingPlane.Size = new System.Drawing.Size(129, 26);
             this.btnCuttingPlane.TabIndex = 9;
             this.btnCuttingPlane.Text = "Cutting Plane Solve";
             this.btnCuttingPlane.UseVisualStyleBackColor = true;
@@ -157,9 +156,10 @@ namespace LPR381
             // btnNewPivot
             // 
             this.btnNewPivot.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnNewPivot.Location = new System.Drawing.Point(909, -1);
+            this.btnNewPivot.Location = new System.Drawing.Point(682, -1);
+            this.btnNewPivot.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnNewPivot.Name = "btnNewPivot";
-            this.btnNewPivot.Size = new System.Drawing.Size(132, 32);
+            this.btnNewPivot.Size = new System.Drawing.Size(99, 26);
             this.btnNewPivot.TabIndex = 10;
             this.btnNewPivot.Text = "New Pivot";
             this.btnNewPivot.UseVisualStyleBackColor = true;
@@ -167,11 +167,11 @@ namespace LPR381
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::LPR381.Properties.Resources.Form_Background;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(1312, 689);
+            this.ClientSize = new System.Drawing.Size(984, 560);
             this.Controls.Add(this.btnNewPivot);
             this.Controls.Add(this.btnF1CanonicalForm);
             this.Controls.Add(this.btnExit1);
@@ -183,8 +183,8 @@ namespace LPR381
             this.Controls.Add(this.btnChooseFile);
             this.Controls.Add(this.dgwMainDisplay);
             this.Location = new System.Drawing.Point(0, -1);
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.dgwMainDisplay)).EndInit();
             this.ResumeLayout(false);
