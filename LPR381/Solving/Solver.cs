@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace LPR381.Solving
 {
@@ -190,14 +191,19 @@ namespace LPR381.Solving
                     };
 
                     SolveChildNode(node, leftNode, branchVarIndex, branchValue, true, model.DecisionVariableCount);
-                    SolveChildNode(node, rightNode, branchVarIndex, branchValue, false, model.DecisionVariableCount);
+                    
 
                     result.AllNodes.Add(leftNode);
+
+                    SolveChildNode(node, rightNode, branchVarIndex, branchValue, false, model.DecisionVariableCount);
+
                     result.AllNodes.Add(rightNode);
+
+
 
                     foreach (var child in new[] { leftNode, rightNode })
                     {
-                        if (child.IsFathomed) continue; // infeasible — SolveChildNode already flagged it
+                        if (child.IsFathomed) continue; // infeasible 
 
                         var (childIsInt, childReason, childObj) =
                             TestBranchSolution(child.SubProblemResult, incumbent, model.IsMaximization, integerVarIndices);
@@ -211,17 +217,20 @@ namespace LPR381.Solving
                             continue;
                         }
 
-                        if (childIsInt)
+                        if (childIsInt )
                         {
                             child.IsFathomed = true;
                             child.FathomReason = "integer solution";
-                            incumbent = childObj;
-                            result.ObjectiveValue = childObj;
-                            result.VariableValues = child.SubProblemResult.VariableValues;
+                            if (better)
+                            {
+                                incumbent = childObj;
+                                result.ObjectiveValue = childObj;
+                                result.VariableValues = child.SubProblemResult.VariableValues;
+                            }
                         }
-                        else
+                        else if (!childIsInt)
                         {
-                            nodesToSolve.Add(child); // keep exploring — this is the queue growing correctly
+                            nodesToSolve.Add(child); // keep branching
                         }
                     }
                 }
@@ -242,29 +251,31 @@ namespace LPR381.Solving
 
             bool infeasible = DualSimplex(nodeTableau, history); // appends only this node's pivots
 
-            if (infeasible)
-            {
-                child.IsFathomed = true;
-                child.FathomReason = "infeasible";
-                child.SubProblemResult = new SolverResult
-                {
-                    IsInfeasible = true,
-                    FinalTableau = nodeTableau,
-                    IterationHistory = history
-                };
-                return;
-            }
+           //if (infeasible) {
+           //     child.IsFathomed = true;
+           //     child.FathomReason = "infeasible";
+           //     child.SubProblemResult = new SolverResult
+           //     {
+           //         IsOptimal = false,
+           //         IsInfeasible = true,
+           //         FinalTableau = history[history.Count - 1],
+           //         IterationHistory = history
+           //     };
+           //     return;
+            //}
+
 
             // Dual simplex only touches RHS feasibility, never the objective row,
             // so once it terminates feasible, the node is also optimal — no primal cleanup needed.
             int rhsCol = nodeTableau.Rows[0].Count - 1;
+            //MessageBox.Show($"Node {child.BranchDescription} solved. Objective value: {nodeTableau.Rows[0][rhsCol]}");
             child.SubProblemResult = new SolverResult
             {
                 IsOptimal = true,
-                FinalTableau = nodeTableau,
+                FinalTableau = history[history.Count-1],
                 IterationHistory = history,
-                ObjectiveValue = nodeTableau.Rows[0][rhsCol],
-                VariableValues = ExtractSolution(nodeTableau, decisionVarCount)
+                ObjectiveValue = history[history.Count-1].Rows[0][rhsCol],
+                VariableValues = ExtractSolution(history[history.Count-1], decisionVarCount)
             };
         }
         private double[] ExtractSolution(Tableau table, int decisionVarCount)
