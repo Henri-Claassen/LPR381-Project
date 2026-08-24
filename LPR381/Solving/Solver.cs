@@ -251,18 +251,20 @@ namespace LPR381.Solving
 
             bool infeasible = DualSimplex(nodeTableau, history); // appends only this node's pivots
 
-           //if (infeasible) {
-           //     child.IsFathomed = true;
-           //     child.FathomReason = "infeasible";
-           //     child.SubProblemResult = new SolverResult
-           //     {
-           //         IsOptimal = false,
-           //         IsInfeasible = true,
-           //         FinalTableau = history[history.Count - 1],
-           //         IterationHistory = history
-           //     };
-           //     return;
-            //}
+            var (optimal, unbounded) = RunPrimalLoop(nodeTableau, history); // run primal simplex after dual
+
+            if (unbounded) {
+                child.IsFathomed = true;
+                child.FathomReason = "unbounded";
+                child.SubProblemResult = new SolverResult
+                {
+                    IsOptimal = false,
+                    IsUnbounded = true,
+                    FinalTableau = nodeTableau,
+                    IterationHistory = history
+                };
+                return;
+            }
 
 
             // Dual simplex only touches RHS feasibility, never the objective row,
