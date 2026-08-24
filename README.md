@@ -15,15 +15,12 @@ text output file.
 - [Using the application](#using-the-application)
 - [Sensitivity analysis](#sensitivity-analysis)
 - [Output file](#output-file)
-- [Known limitations](#known-limitations)
-- [Contributors](#contributors)
 
 ## Features
 
 | Requirement | Status |
 |---|---|
 | Primal Simplex Algorithm | ✅ Implemented, with full tableau iteration history |
-| Revised Primal Simplex Algorithm | ❌ Not implemented (`Solver.SolveRevisedSimplex` is a stub) |
 | Branch & Bound Simplex Algorithm | ✅ Implemented (backtracking, sub-problem tree, fathoming, best candidate) |
 | Cutting Plane Algorithm | ✅ Implemented |
 | Branch & Bound Knapsack Algorithm | ✅ Implemented (greedy fractional relaxation + branching) |
@@ -165,23 +162,3 @@ canonical form, every tableau iteration, and the final result — all decimal
 values rounded to three decimal places as required by the spec. Sensitivity
 operations after the initial solve are **appended** to the same file rather
 than overwriting it, so the file ends up as a full log of the session.
-
-## Known limitations
-
-- **Revised Primal Simplex is not implemented** — `Solver.SolveRevisedSimplex`
-  is a stub and isn't wired to any button. The spec requires it alongside
-  standard Primal Simplex.
-- **`urs` (unrestricted) variables** are split into two columns internally
-  (`x2'`, `x2''`). Sensitivity analysis operations that need a single
-  basic/non-basic column for a variable will throw a clear error if that
-  variable is `urs`, rather than silently picking the wrong column.
-- Sensitivity analysis is built on Primal Simplex's tableau structure; it
-  isn't applied to Branch & Bound or Knapsack solutions.
-
-## Contributors
-
-- Henri-Claassen
-- Lebogang Masia
-- Busi202
-- CoffeeLover
-- Nicholas005
