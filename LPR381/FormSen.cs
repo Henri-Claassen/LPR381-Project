@@ -37,6 +37,13 @@ namespace LPR381
         // Every applied change / range query after Solve gets appended here.
         private string sensitivityFilePath;
 
+        // True while dgwSenDisplay is showing the DUAL model's tableau instead of the
+        // working (primal) model's — see btnSenSolveDual_Click / btnSenBack_Click.
+        // currentModel/currentResult are NOT affected by viewing the dual; this only
+        // guards cell-click selection, since the dual's columns/rows don't line up
+        // with the primal model's variable/constraint indices.
+        private bool isShowingDual;
+
         public FormSen()
         {
             InitializeComponent();
@@ -80,8 +87,10 @@ namespace LPR381
         // so mapping a click there back to a column would pick the wrong variable.
         private void dgwSenDisplay_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0 || e.ColumnIndex < 0 || currentModel == null)
+            if (e.RowIndex < 0 || e.ColumnIndex < 0 || currentModel == null || isShowingDual)
             {
+                // While the dual is on screen, its columns/rows don't correspond to the
+                // primal model's variables/constraints — ignore clicks until Back to Model.
                 return;
             }
 
@@ -195,7 +204,12 @@ namespace LPR381
             string findRangeTarget = lastSelectionKind == SelectionKind.Variable ? varPart + " (variable)"
                 : lastSelectionKind == SelectionKind.Constraint ? cPart + " (RHS)"
                 : "none";
-            lblSenSelection.Text = $"Selected variable: {varPart}    |    Selected constraint: {cPart}    |    Find Range will show: {findRangeTarget}";
+
+            string viewingNotice = isShowingDual
+                ? "VIEWING THE DUAL MODEL — click \"Back to Model\" to return and select a different variable/constraint.    |    "
+                : "";
+
+            lblSenSelection.Text = $"{viewingNotice}Selected variable: {varPart}    |    Selected constraint: {cPart}    |    Find Range will show: {findRangeTarget}";
         }
         #endregion
 
@@ -230,6 +244,7 @@ namespace LPR381
                 selectedVariableIndex = null;
                 selectedConstraintIndex = null;
                 lastSelectionKind = SelectionKind.None;
+                isShowingDual = false;
                 UpdateSelectionLabel();
 
                 if (currentResult.SwitchedToDualSimplex)
@@ -287,6 +302,7 @@ namespace LPR381
                     selectedVariableIndex = null;
                     selectedConstraintIndex = null;
                     lastSelectionKind = SelectionKind.None;
+                    isShowingDual = false;
                     sensitivityFilePath = null;
                     UpdateSelectionLabel();
                 }
@@ -705,6 +721,8 @@ namespace LPR381
         #endregion
 
         #region Duality
+        // Shows the dual model's constraints, then — right after them, in the same
+        // popup — whether the pair exhibits strong or weak duality.
         private void btnSenApplyDuality_Click(object sender, EventArgs e)
         {
             if (!EnsureSolved())
@@ -716,8 +734,13 @@ namespace LPR381
             {
                 LpModel dual = analyzer.ApplyDuality();
                 string description = DescribeModel(dual, "Dual Model");
-                MessageBox.Show(description, "Dual Model", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                AppendToSensitivityLog(description);
+
+                string strength = analyzer.CheckDualityStrength();
+
+                string message = description + "\n" + $"This model exhibits {strength.ToUpper()} duality.";
+
+                ShowMessageDialog(message, "Dual Model & Duality Strength");
+                AppendToSensitivityLog(message);
             }
             catch (Exception ex)
             {
@@ -738,6 +761,8 @@ namespace LPR381
                 SolverResult dualResult = analyzer.SolveDualModel();
 
                 Display.PopulateFullHistory(dualResult, dual, dgwSenDisplay);
+                isShowingDual = true;
+                UpdateSelectionLabel();
 
                 EnsureSensitivityFile();
                 WriteOutputFile.AppendResultToFile(dualResult, sensitivityFilePath, "Dual Model Solution");
@@ -748,24 +773,19 @@ namespace LPR381
             }
         }
 
-        private void btnSenDualityStrength_Click(object sender, EventArgs e)
+        // Redisplays the working (primal) model's last tableau — the way back after
+        // Solve Dual Model has swapped the grid to show the dual instead. Doesn't
+        // re-solve anything, so every applied change made so far is preserved.
+        private void btnSenBack_Click(object sender, EventArgs e)
         {
             if (!EnsureSolved())
             {
                 return;
             }
 
-            try
-            {
-                string strength = analyzer.CheckDualityStrength();
-                string message = $"This model exhibits {strength} duality.";
-                MessageBox.Show(message, "Duality Strength", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                AppendToSensitivityLog(message);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            Display.PopulateFullHistory(currentResult, currentModel, dgwSenDisplay);
+            isShowingDual = false;
+            UpdateSelectionLabel();
         }
 
         private static string DescribeModel(LpModel model, string title)
@@ -871,6 +891,7 @@ namespace LPR381
             selectedVariableIndex = null;
             selectedConstraintIndex = null;
             lastSelectionKind = SelectionKind.None;
+            isShowingDual = false;
             UpdateSelectionLabel();
 
             var sb = new StringBuilder();
@@ -985,6 +1006,55 @@ namespace LPR381
                 prompt.CancelButton = cancel;
 
                 return prompt.ShowDialog() == DialogResult.OK ? textBox.Text : null;
+            }
+        }
+
+        // A larger, resizable, scrollable read-only display — used where a plain
+        // MessageBox would be cramped for multi-line content (e.g. a dual model's
+        // full constraint list followed by its duality strength).
+        private static void ShowMessageDialog(string text, string caption)
+        {
+            using (Form dialog = new Form())
+            {
+                dialog.Width = 420;
+                dialog.Height = 320;
+                dialog.MinimumSize = new Size(320, 220);
+                dialog.FormBorderStyle = FormBorderStyle.Sizable;
+                dialog.Text = caption;
+                dialog.StartPosition = FormStartPosition.CenterParent;
+                dialog.MaximizeBox = true;
+                dialog.MinimizeBox = false;
+
+                TextBox textBox = new TextBox()
+                {
+                    Multiline = true,
+                    ReadOnly = true,
+                    ScrollBars = ScrollBars.Vertical,
+                    Left = 10,
+                    Top = 10,
+                    Width = 385,
+                    Height = 225,
+                    Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
+                    Font = new Font("Consolas", 9.5F),
+                    Text = text
+                };
+
+                Button ok = new Button()
+                {
+                    Text = "OK",
+                    DialogResult = DialogResult.OK,
+                    Left = 320,
+                    Top = 245,
+                    Width = 75,
+                    Height = 30,
+                    Anchor = AnchorStyles.Bottom | AnchorStyles.Right
+                };
+
+                dialog.Controls.Add(textBox);
+                dialog.Controls.Add(ok);
+                dialog.AcceptButton = ok;
+
+                dialog.ShowDialog();
             }
         }
         #endregion

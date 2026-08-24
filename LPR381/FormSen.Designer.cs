@@ -43,7 +43,7 @@ namespace LPR381
             this.btnSenAddConstraint = new System.Windows.Forms.Button();
             this.btnSenApplyDuality = new System.Windows.Forms.Button();
             this.btnSenSolveDual = new System.Windows.Forms.Button();
-            this.btnSenDualityStrength = new System.Windows.Forms.Button();
+            this.btnSenBack = new System.Windows.Forms.Button();
             this.lblSenSelection = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgwSenDisplay)).BeginInit();
             this.SuspendLayout();
@@ -193,16 +193,16 @@ namespace LPR381
             this.btnSenApplyDuality.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSenApplyDuality.Location = new System.Drawing.Point(513, -1);
             this.btnSenApplyDuality.Name = "btnSenApplyDuality";
-            this.btnSenApplyDuality.Size = new System.Drawing.Size(150, 33);
+            this.btnSenApplyDuality.Size = new System.Drawing.Size(110, 33);
             this.btnSenApplyDuality.TabIndex = 14;
-            this.btnSenApplyDuality.Text = "Show Dual Model";
+            this.btnSenApplyDuality.Text = "Duality";
             this.btnSenApplyDuality.UseVisualStyleBackColor = true;
             this.btnSenApplyDuality.Click += new System.EventHandler(this.btnSenApplyDuality_Click);
             //
             // btnSenSolveDual
             //
             this.btnSenSolveDual.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenSolveDual.Location = new System.Drawing.Point(659, -1);
+            this.btnSenSolveDual.Location = new System.Drawing.Point(619, -1);
             this.btnSenSolveDual.Name = "btnSenSolveDual";
             this.btnSenSolveDual.Size = new System.Drawing.Size(150, 33);
             this.btnSenSolveDual.TabIndex = 15;
@@ -210,16 +210,16 @@ namespace LPR381
             this.btnSenSolveDual.UseVisualStyleBackColor = true;
             this.btnSenSolveDual.Click += new System.EventHandler(this.btnSenSolveDual_Click);
             //
-            // btnSenDualityStrength
+            // btnSenBack
             //
-            this.btnSenDualityStrength.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenDualityStrength.Location = new System.Drawing.Point(805, -1);
-            this.btnSenDualityStrength.Name = "btnSenDualityStrength";
-            this.btnSenDualityStrength.Size = new System.Drawing.Size(150, 33);
-            this.btnSenDualityStrength.TabIndex = 16;
-            this.btnSenDualityStrength.Text = "Duality Strength";
-            this.btnSenDualityStrength.UseVisualStyleBackColor = true;
-            this.btnSenDualityStrength.Click += new System.EventHandler(this.btnSenDualityStrength_Click);
+            this.btnSenBack.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnSenBack.Location = new System.Drawing.Point(765, -1);
+            this.btnSenBack.Name = "btnSenBack";
+            this.btnSenBack.Size = new System.Drawing.Size(175, 33);
+            this.btnSenBack.TabIndex = 18;
+            this.btnSenBack.Text = "Back to Model";
+            this.btnSenBack.UseVisualStyleBackColor = true;
+            this.btnSenBack.Click += new System.EventHandler(this.btnSenBack_Click);
             //
             // lblSenSelection
             //
@@ -241,7 +241,7 @@ namespace LPR381
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1312, 689);
             this.Controls.Add(this.lblSenSelection);
-            this.Controls.Add(this.btnSenDualityStrength);
+            this.Controls.Add(this.btnSenBack);
             this.Controls.Add(this.btnSenSolveDual);
             this.Controls.Add(this.btnSenApplyDuality);
             this.Controls.Add(this.btnSenAddConstraint);
@@ -280,7 +280,7 @@ namespace LPR381
         private System.Windows.Forms.Button btnSenAddConstraint;
         private System.Windows.Forms.Button btnSenApplyDuality;
         private System.Windows.Forms.Button btnSenSolveDual;
-        private System.Windows.Forms.Button btnSenDualityStrength;
+        private System.Windows.Forms.Button btnSenBack;
         private System.Windows.Forms.Label lblSenSelection;
     }
 }

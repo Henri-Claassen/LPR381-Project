@@ -118,10 +118,5 @@ namespace LPR381
                 MessageBox.Show("Error solving NLP: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-        private void btnNLShadowPrice_Click(object sender, EventArgs e)
-        {
-            //Shadow Price calculation for nonlinear programming will be put here
-        }
     }
 }

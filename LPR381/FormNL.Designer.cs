@@ -34,7 +34,6 @@
             this.btnNLChooseFile = new System.Windows.Forms.Button();
             this.btnNLSolve = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
-            this.btnNLShadowPrice = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvNLDisplay)).BeginInit();
             this.SuspendLayout();
             // 
@@ -96,22 +95,11 @@
             this.btnNLSolve.Text = "Non-Linear Solve";
             this.btnNLSolve.UseVisualStyleBackColor = true;
             this.btnNLSolve.Click += new System.EventHandler(this.btnNLSolve_Click);
-            // 
+            //
             // openFileDialog1
-            // 
+            //
             this.openFileDialog1.FileName = "openFileDialog1";
-            // 
-            // btnNLShadowPrice
-            // 
-            this.btnNLShadowPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnNLShadowPrice.Location = new System.Drawing.Point(280, -1);
-            this.btnNLShadowPrice.Name = "btnNLShadowPrice";
-            this.btnNLShadowPrice.Size = new System.Drawing.Size(225, 32);
-            this.btnNLShadowPrice.TabIndex = 5;
-            this.btnNLShadowPrice.Text = "Display Shadow Price";
-            this.btnNLShadowPrice.UseVisualStyleBackColor = true;
-            this.btnNLShadowPrice.Click += new System.EventHandler(this.btnNLShadowPrice_Click);
-            // 
+            //
             // FormNL
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -119,7 +107,6 @@
             this.BackgroundImage = global::LPR381.Properties.Resources.Form_Background;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.ClientSize = new System.Drawing.Size(1312, 689);
-            this.Controls.Add(this.btnNLShadowPrice);
             this.Controls.Add(this.btnNLSolve);
             this.Controls.Add(this.btnNLChooseFile);
             this.Controls.Add(this.dgvNLDisplay);
@@ -140,6 +127,5 @@
         private System.Windows.Forms.Button btnNLChooseFile;
         private System.Windows.Forms.Button btnNLSolve;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
-        private System.Windows.Forms.Button btnNLShadowPrice;
     }
 }
