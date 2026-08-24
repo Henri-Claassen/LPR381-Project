@@ -136,5 +136,8 @@
   <ItemGroup>
     <None Include="Resources\Form Background.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Form Background - Sen.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

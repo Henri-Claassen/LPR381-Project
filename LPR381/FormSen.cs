@@ -1058,5 +1058,10 @@ namespace LPR381
             }
         }
         #endregion
+
+        private void FormSen_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
