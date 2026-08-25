@@ -141,6 +141,7 @@ namespace LPR381.Solving
                 incumbent = objectiveValue;
                 result.ObjectiveValue = objectiveValue;
                 result.VariableValues = rootNode.SubProblemResult.VariableValues;
+                result.IsOptimal = true;   
                 return result; // nothing left to branch on
             }
                 else
@@ -249,22 +250,36 @@ namespace LPR381.Solving
 
             var history = new List<Tableau> { CloneTableau(nodeTableau) }; // t-i for THIS node only
 
-            bool infeasible = DualSimplex(nodeTableau, history); // appends only this node's pivots
+            bool infeasible = BranchDualSimplex(nodeTableau, history);
 
-            var (optimal, unbounded) = RunPrimalLoop(nodeTableau, history); // run primal simplex after dual
-
-            if (unbounded) {
+            if (infeasible)
+            {
                 child.IsFathomed = true;
-                child.FathomReason = "unbounded";
+                child.FathomReason = "infeasible";
                 child.SubProblemResult = new SolverResult
                 {
-                    IsOptimal = false,
-                    IsUnbounded = true,
+                    IsInfeasible = true,
                     FinalTableau = nodeTableau,
                     IterationHistory = history
                 };
                 return;
             }
+
+            var (optimal, unbounded) = RunPrimalLoop(nodeTableau, history);
+
+            if (unbounded)
+            {
+                child.IsFathomed = true;
+                child.FathomReason = "unbounded";
+                child.SubProblemResult = new SolverResult
+                {
+                    IsUnbounded = true,
+                    FinalTableau = history[history.Count-1],
+                    IterationHistory = history
+                };
+                return;
+            }
+
 
 
             // Dual simplex only touches RHS feasibility, never the objective row,
@@ -1014,6 +1029,74 @@ namespace LPR381.Solving
         }
         #endregion
 
+        #region BranchDualSimplex
+        private bool BranchDualSimplex(Tableau table, List<Tableau> history)
+        {
+            while (true)
+            {
+                int rowNr = BranchFindDualPivotRow(table);
+                if (rowNr == -1)
+                {
+                    return false; // no negative RHS left -> feasible, done
+                }
+
+                int colNr = BranchFindDualPivotCol(table, rowNr);
+                if (colNr == -1)
+                {
+                    return true; // no valid pivot column -> infeasible
+                }
+
+                Pivot(table, rowNr, colNr);
+                table.TableNumber = "t-" + (history.Count + 1);
+                history.Add(CloneTableau(table));
+            }
+        }
+        #endregion
+
+        #region BranchFindDualPivotRow
+        private int BranchFindDualPivotRow(Tableau table)
+        {
+            int pivotRow = -1;
+            const double eps = 1e-9;
+            for (int i = 1; i < table.Rows.Count; i++)
+            {
+                if ((table.Rows[i][(table.Rows[i].Count - 1)] >= -eps))
+                {
+                    continue;
+                }
+                if (pivotRow == -1 || (table.Rows[pivotRow][table.Rows[pivotRow].Count - 1]) > (table.Rows[i][table.Rows[i].Count - 1]))
+                {
+                    pivotRow = i;
+                }
+            }
+            return pivotRow;
+        }
+        #endregion
+
+        #region BranchFindDualPivotCol
+        private int BranchFindDualPivotCol(Tableau table, int pivotRow)
+        {
+            int pivotCol = -1;
+            const double eps = 1e-9;
+            for (int i = 0; i < table.Rows[0].Count - 1; i++)
+            {
+                if (table.Rows[pivotRow][i] >= -eps)
+                {
+                    continue;
+                }
+                if (pivotCol == -1)
+                {
+                    pivotCol = i;
+                }
+                if (Math.Abs((table.Rows[0][pivotCol]) / (table.Rows[pivotRow][pivotCol])) > Math.Abs((table.Rows[0][i]) / (table.Rows[pivotRow][i])))
+                {
+                    pivotCol = i;
+                }
+            }
+            return pivotCol;
+        }
+        #endregion
+
         #region DualSimplex
         private bool DualSimplex(Tableau table, List<Tableau> history)
         {
@@ -1042,8 +1125,8 @@ namespace LPR381.Solving
         private int FindDualPivotRow(Tableau table)
         {
             int pivotRow = -1;
-
             for (int i = 1; i < table.Rows.Count; i++)
+
             {
                 if ((table.Rows[i][(table.Rows[i].Count - 1)] >= 0))
                 {
