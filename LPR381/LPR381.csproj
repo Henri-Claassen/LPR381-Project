@@ -7,7 +7,7 @@
     <ProjectGuid>{C1B139CF-FBCF-4F97-97D9-58FC258F8741}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>LPR381</RootNamespace>
-    <AssemblyName>LPR381</AssemblyName>
+    <AssemblyName>solver</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
