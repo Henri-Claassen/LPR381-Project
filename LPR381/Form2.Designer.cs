@@ -38,7 +38,7 @@
             // btnForm1
             // 
             this.btnForm1.Location = new System.Drawing.Point(92, 182);
-            this.btnForm1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnForm1.Margin = new System.Windows.Forms.Padding(2);
             this.btnForm1.Name = "btnForm1";
             this.btnForm1.Size = new System.Drawing.Size(123, 33);
             this.btnForm1.TabIndex = 7;
@@ -49,7 +49,7 @@
             // btnSen
             // 
             this.btnSen.Location = new System.Drawing.Point(424, 182);
-            this.btnSen.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnSen.Margin = new System.Windows.Forms.Padding(2);
             this.btnSen.Name = "btnSen";
             this.btnSen.Size = new System.Drawing.Size(123, 33);
             this.btnSen.TabIndex = 8;
@@ -60,7 +60,7 @@
             // btnNonLin
             // 
             this.btnNonLin.Location = new System.Drawing.Point(757, 182);
-            this.btnNonLin.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnNonLin.Margin = new System.Windows.Forms.Padding(2);
             this.btnNonLin.Name = "btnNonLin";
             this.btnNonLin.Size = new System.Drawing.Size(123, 33);
             this.btnNonLin.TabIndex = 9;
@@ -76,7 +76,7 @@
             this.btnExit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnExit.ForeColor = System.Drawing.Color.White;
             this.btnExit.Location = new System.Drawing.Point(940, -1);
-            this.btnExit.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnExit.Margin = new System.Windows.Forms.Padding(2);
             this.btnExit.Name = "btnExit";
             this.btnExit.Size = new System.Drawing.Size(45, 30);
             this.btnExit.TabIndex = 10;
@@ -96,10 +96,11 @@
             this.Controls.Add(this.btnSen);
             this.Controls.Add(this.btnForm1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "FormMain_Menu";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Form2";
+            this.Text = "Main Menu";
             this.Load += new System.EventHandler(this.Form2_Load);
             this.ResumeLayout(false);
 

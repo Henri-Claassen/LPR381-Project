@@ -28,6 +28,7 @@ namespace LPR381
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormSen));
             this.btnSenChooseFile = new System.Windows.Forms.Button();
             this.btnSenSolve = new System.Windows.Forms.Button();
             this.btnSenMM = new System.Windows.Forms.Button();
@@ -52,9 +53,9 @@ namespace LPR381
             // 
             this.btnSenChooseFile.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSenChooseFile.Location = new System.Drawing.Point(-1, -1);
-            this.btnSenChooseFile.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnSenChooseFile.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSenChooseFile.Name = "btnSenChooseFile";
-            this.btnSenChooseFile.Size = new System.Drawing.Size(133, 33);
+            this.btnSenChooseFile.Size = new System.Drawing.Size(100, 27);
             this.btnSenChooseFile.TabIndex = 0;
             this.btnSenChooseFile.Text = "Choose File";
             this.btnSenChooseFile.UseVisualStyleBackColor = true;
@@ -63,10 +64,10 @@ namespace LPR381
             // btnSenSolve
             // 
             this.btnSenSolve.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenSolve.Location = new System.Drawing.Point(130, -1);
-            this.btnSenSolve.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnSenSolve.Location = new System.Drawing.Point(98, -1);
+            this.btnSenSolve.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSenSolve.Name = "btnSenSolve";
-            this.btnSenSolve.Size = new System.Drawing.Size(240, 33);
+            this.btnSenSolve.Size = new System.Drawing.Size(180, 27);
             this.btnSenSolve.TabIndex = 1;
             this.btnSenSolve.Text = "Sensitivity Analysis Solve";
             this.btnSenSolve.UseVisualStyleBackColor = true;
@@ -75,10 +76,10 @@ namespace LPR381
             // btnSenMM
             // 
             this.btnSenMM.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenMM.Location = new System.Drawing.Point(1139, -1);
-            this.btnSenMM.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnSenMM.Location = new System.Drawing.Point(854, -1);
+            this.btnSenMM.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSenMM.Name = "btnSenMM";
-            this.btnSenMM.Size = new System.Drawing.Size(120, 33);
+            this.btnSenMM.Size = new System.Drawing.Size(90, 27);
             this.btnSenMM.TabIndex = 2;
             this.btnSenMM.Text = "Main Menu";
             this.btnSenMM.UseVisualStyleBackColor = true;
@@ -92,10 +93,10 @@ namespace LPR381
             this.btnSenExit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnSenExit.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnSenExit.ForeColor = System.Drawing.Color.White;
-            this.btnSenExit.Location = new System.Drawing.Point(1253, -1);
-            this.btnSenExit.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnSenExit.Location = new System.Drawing.Point(940, -1);
+            this.btnSenExit.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSenExit.Name = "btnSenExit";
-            this.btnSenExit.Size = new System.Drawing.Size(60, 33);
+            this.btnSenExit.Size = new System.Drawing.Size(45, 27);
             this.btnSenExit.TabIndex = 3;
             this.btnSenExit.Text = "Exit";
             this.btnSenExit.UseVisualStyleBackColor = false;
@@ -104,12 +105,12 @@ namespace LPR381
             // dgwSenDisplay
             // 
             this.dgwSenDisplay.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgwSenDisplay.Location = new System.Drawing.Point(0, 89);
-            this.dgwSenDisplay.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.dgwSenDisplay.Location = new System.Drawing.Point(0, 72);
+            this.dgwSenDisplay.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.dgwSenDisplay.Name = "dgwSenDisplay";
             this.dgwSenDisplay.RowHeadersWidth = 51;
             this.dgwSenDisplay.RowTemplate.Height = 24;
-            this.dgwSenDisplay.Size = new System.Drawing.Size(1313, 560);
+            this.dgwSenDisplay.Size = new System.Drawing.Size(985, 455);
             this.dgwSenDisplay.TabIndex = 4;
             // 
             // openFileDialog1
@@ -119,10 +120,10 @@ namespace LPR381
             // btnSenFindRange
             // 
             this.btnSenFindRange.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenFindRange.Location = new System.Drawing.Point(-1, 33);
-            this.btnSenFindRange.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnSenFindRange.Location = new System.Drawing.Point(-1, 27);
+            this.btnSenFindRange.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSenFindRange.Name = "btnSenFindRange";
-            this.btnSenFindRange.Size = new System.Drawing.Size(140, 33);
+            this.btnSenFindRange.Size = new System.Drawing.Size(105, 27);
             this.btnSenFindRange.TabIndex = 5;
             this.btnSenFindRange.Text = "Find Range";
             this.btnSenFindRange.UseVisualStyleBackColor = true;
@@ -131,10 +132,10 @@ namespace LPR381
             // btnSenShadowPrice
             // 
             this.btnSenShadowPrice.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenShadowPrice.Location = new System.Drawing.Point(367, -1);
-            this.btnSenShadowPrice.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnSenShadowPrice.Location = new System.Drawing.Point(275, -1);
+            this.btnSenShadowPrice.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSenShadowPrice.Name = "btnSenShadowPrice";
-            this.btnSenShadowPrice.Size = new System.Drawing.Size(202, 33);
+            this.btnSenShadowPrice.Size = new System.Drawing.Size(152, 27);
             this.btnSenShadowPrice.TabIndex = 6;
             this.btnSenShadowPrice.Text = "Display Shadow Price";
             this.btnSenShadowPrice.UseVisualStyleBackColor = true;
@@ -143,10 +144,10 @@ namespace LPR381
             // btnSenApplyVar
             // 
             this.btnSenApplyVar.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenApplyVar.Location = new System.Drawing.Point(135, 33);
-            this.btnSenApplyVar.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnSenApplyVar.Location = new System.Drawing.Point(101, 27);
+            this.btnSenApplyVar.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSenApplyVar.Name = "btnSenApplyVar";
-            this.btnSenApplyVar.Size = new System.Drawing.Size(180, 33);
+            this.btnSenApplyVar.Size = new System.Drawing.Size(135, 27);
             this.btnSenApplyVar.TabIndex = 7;
             this.btnSenApplyVar.Text = "Apply Variable Change";
             this.btnSenApplyVar.UseVisualStyleBackColor = true;
@@ -155,10 +156,10 @@ namespace LPR381
             // btnSenApplyRHS
             // 
             this.btnSenApplyRHS.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenApplyRHS.Location = new System.Drawing.Point(311, 33);
-            this.btnSenApplyRHS.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnSenApplyRHS.Location = new System.Drawing.Point(233, 27);
+            this.btnSenApplyRHS.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSenApplyRHS.Name = "btnSenApplyRHS";
-            this.btnSenApplyRHS.Size = new System.Drawing.Size(160, 33);
+            this.btnSenApplyRHS.Size = new System.Drawing.Size(120, 27);
             this.btnSenApplyRHS.TabIndex = 8;
             this.btnSenApplyRHS.Text = "Apply RHS Change";
             this.btnSenApplyRHS.UseVisualStyleBackColor = true;
@@ -167,10 +168,10 @@ namespace LPR381
             // btnSenApplyCol
             // 
             this.btnSenApplyCol.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenApplyCol.Location = new System.Drawing.Point(467, 33);
-            this.btnSenApplyCol.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnSenApplyCol.Location = new System.Drawing.Point(350, 27);
+            this.btnSenApplyCol.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSenApplyCol.Name = "btnSenApplyCol";
-            this.btnSenApplyCol.Size = new System.Drawing.Size(180, 33);
+            this.btnSenApplyCol.Size = new System.Drawing.Size(135, 27);
             this.btnSenApplyCol.TabIndex = 9;
             this.btnSenApplyCol.Text = "Apply Column Change";
             this.btnSenApplyCol.UseVisualStyleBackColor = true;
@@ -179,10 +180,10 @@ namespace LPR381
             // btnSenAddActivity
             // 
             this.btnSenAddActivity.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenAddActivity.Location = new System.Drawing.Point(643, 33);
-            this.btnSenAddActivity.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnSenAddActivity.Location = new System.Drawing.Point(482, 27);
+            this.btnSenAddActivity.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSenAddActivity.Name = "btnSenAddActivity";
-            this.btnSenAddActivity.Size = new System.Drawing.Size(131, 33);
+            this.btnSenAddActivity.Size = new System.Drawing.Size(98, 27);
             this.btnSenAddActivity.TabIndex = 10;
             this.btnSenAddActivity.Text = "Add Activity";
             this.btnSenAddActivity.UseVisualStyleBackColor = true;
@@ -191,10 +192,10 @@ namespace LPR381
             // btnSenAddConstraint
             // 
             this.btnSenAddConstraint.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenAddConstraint.Location = new System.Drawing.Point(769, 33);
-            this.btnSenAddConstraint.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnSenAddConstraint.Location = new System.Drawing.Point(577, 27);
+            this.btnSenAddConstraint.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSenAddConstraint.Name = "btnSenAddConstraint";
-            this.btnSenAddConstraint.Size = new System.Drawing.Size(149, 33);
+            this.btnSenAddConstraint.Size = new System.Drawing.Size(112, 27);
             this.btnSenAddConstraint.TabIndex = 11;
             this.btnSenAddConstraint.Text = "Add Constraint";
             this.btnSenAddConstraint.UseVisualStyleBackColor = true;
@@ -203,10 +204,10 @@ namespace LPR381
             // btnSenApplyDuality
             // 
             this.btnSenApplyDuality.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenApplyDuality.Location = new System.Drawing.Point(567, -1);
-            this.btnSenApplyDuality.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnSenApplyDuality.Location = new System.Drawing.Point(425, -1);
+            this.btnSenApplyDuality.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSenApplyDuality.Name = "btnSenApplyDuality";
-            this.btnSenApplyDuality.Size = new System.Drawing.Size(109, 33);
+            this.btnSenApplyDuality.Size = new System.Drawing.Size(82, 27);
             this.btnSenApplyDuality.TabIndex = 14;
             this.btnSenApplyDuality.Text = "Duality";
             this.btnSenApplyDuality.UseVisualStyleBackColor = true;
@@ -215,10 +216,10 @@ namespace LPR381
             // btnSenSolveDual
             // 
             this.btnSenSolveDual.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenSolveDual.Location = new System.Drawing.Point(674, -1);
-            this.btnSenSolveDual.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnSenSolveDual.Location = new System.Drawing.Point(506, -1);
+            this.btnSenSolveDual.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSenSolveDual.Name = "btnSenSolveDual";
-            this.btnSenSolveDual.Size = new System.Drawing.Size(169, 33);
+            this.btnSenSolveDual.Size = new System.Drawing.Size(127, 27);
             this.btnSenSolveDual.TabIndex = 15;
             this.btnSenSolveDual.Text = "Solve Dual Model";
             this.btnSenSolveDual.UseVisualStyleBackColor = true;
@@ -227,10 +228,10 @@ namespace LPR381
             // btnSenBack
             // 
             this.btnSenBack.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnSenBack.Location = new System.Drawing.Point(841, -1);
-            this.btnSenBack.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.btnSenBack.Location = new System.Drawing.Point(631, -1);
+            this.btnSenBack.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.btnSenBack.Name = "btnSenBack";
-            this.btnSenBack.Size = new System.Drawing.Size(175, 33);
+            this.btnSenBack.Size = new System.Drawing.Size(131, 27);
             this.btnSenBack.TabIndex = 18;
             this.btnSenBack.Text = "Back to Model";
             this.btnSenBack.UseVisualStyleBackColor = true;
@@ -240,20 +241,21 @@ namespace LPR381
             // 
             this.lblSenSelection.BackColor = System.Drawing.Color.White;
             this.lblSenSelection.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblSenSelection.Location = new System.Drawing.Point(-1, 66);
+            this.lblSenSelection.Location = new System.Drawing.Point(-1, 54);
+            this.lblSenSelection.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblSenSelection.Name = "lblSenSelection";
-            this.lblSenSelection.Size = new System.Drawing.Size(1314, 22);
+            this.lblSenSelection.Size = new System.Drawing.Size(986, 18);
             this.lblSenSelection.TabIndex = 17;
             this.lblSenSelection.Text = "Selected variable: none    |    Selected constraint: none";
             this.lblSenSelection.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // FormSen
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = global::LPR381.Properties.Resources.Form_Background___Sen;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.ClientSize = new System.Drawing.Size(1312, 689);
+            this.ClientSize = new System.Drawing.Size(984, 560);
             this.Controls.Add(this.lblSenSelection);
             this.Controls.Add(this.btnSenBack);
             this.Controls.Add(this.btnSenSolveDual);
@@ -270,7 +272,8 @@ namespace LPR381
             this.Controls.Add(this.btnSenMM);
             this.Controls.Add(this.btnSenSolve);
             this.Controls.Add(this.btnSenChooseFile);
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "FormSen";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FormSen";

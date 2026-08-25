@@ -28,6 +28,7 @@ namespace LPR381
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.dgwMainDisplay = new System.Windows.Forms.DataGridView();
             this.btnChooseFile = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
@@ -103,7 +104,7 @@ namespace LPR381
             // 
             this.btnMainF1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnMainF1.Location = new System.Drawing.Point(854, -1);
-            this.btnMainF1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnMainF1.Margin = new System.Windows.Forms.Padding(2);
             this.btnMainF1.Name = "btnMainF1";
             this.btnMainF1.Size = new System.Drawing.Size(90, 26);
             this.btnMainF1.TabIndex = 5;
@@ -121,7 +122,7 @@ namespace LPR381
             this.btnExit1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnExit1.ForeColor = System.Drawing.Color.White;
             this.btnExit1.Location = new System.Drawing.Point(940, -1);
-            this.btnExit1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnExit1.Margin = new System.Windows.Forms.Padding(2);
             this.btnExit1.Name = "btnExit1";
             this.btnExit1.Size = new System.Drawing.Size(45, 25);
             this.btnExit1.TabIndex = 6;
@@ -133,7 +134,7 @@ namespace LPR381
             // 
             this.btnF1CanonicalForm.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnF1CanonicalForm.Location = new System.Drawing.Point(96, -1);
-            this.btnF1CanonicalForm.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnF1CanonicalForm.Margin = new System.Windows.Forms.Padding(2);
             this.btnF1CanonicalForm.Name = "btnF1CanonicalForm";
             this.btnF1CanonicalForm.Size = new System.Drawing.Size(115, 26);
             this.btnF1CanonicalForm.TabIndex = 8;
@@ -145,7 +146,7 @@ namespace LPR381
             // 
             this.btnCuttingPlane.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnCuttingPlane.Location = new System.Drawing.Point(554, -1);
-            this.btnCuttingPlane.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnCuttingPlane.Margin = new System.Windows.Forms.Padding(2);
             this.btnCuttingPlane.Name = "btnCuttingPlane";
             this.btnCuttingPlane.Size = new System.Drawing.Size(129, 26);
             this.btnCuttingPlane.TabIndex = 9;
@@ -157,7 +158,7 @@ namespace LPR381
             // 
             this.btnNewPivot.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.btnNewPivot.Location = new System.Drawing.Point(682, -1);
-            this.btnNewPivot.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnNewPivot.Margin = new System.Windows.Forms.Padding(2);
             this.btnNewPivot.Name = "btnNewPivot";
             this.btnNewPivot.Size = new System.Drawing.Size(99, 26);
             this.btnNewPivot.TabIndex = 10;
@@ -182,10 +183,11 @@ namespace LPR381
             this.Controls.Add(this.btnSimplex);
             this.Controls.Add(this.btnChooseFile);
             this.Controls.Add(this.dgwMainDisplay);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Location = new System.Drawing.Point(0, -1);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Form1";
+            this.Text = "Solver";
             ((System.ComponentModel.ISupportInitialize)(this.dgwMainDisplay)).EndInit();
             this.ResumeLayout(false);
 
